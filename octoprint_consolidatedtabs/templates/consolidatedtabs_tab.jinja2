@@ -1,6 +1,6 @@
 <div class="row-fluid" data-bind="foreach: settings.settings.plugins.consolidatedtabs.tab_order">
 	<div class="panel panel-default draggable" data-bind="attr: {id: selector().replace('#','') + '_panel'}, css: ['panel','panel-default','draggable','span' + scaffolding()].join(' ')">
-		<div class="panel-heading"><span data-bind="text: name"></span><i class="icon icon-move panel-mover pull-right"></i></div>
+		<div class="panel-heading"><span class="panel-mover" data-bind="text: name"></span><i class="icon icon-move panel-mover pull-right"></i></div>
 		<div class="panel-body"></div>
 	</div>
 </div>
