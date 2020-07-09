@@ -4,7 +4,7 @@
 	<div class="row-fluid">
 		<div class="span11 well" style="min-height: 50px;" data-bind="sortable: { data: settings.settings.plugins.consolidatedtabs.tab_order, options: { cancel: '.unsortable', handle: '.move_tab', axis:'y'} }">
 			<div class="row-fluid" style="margin-bottom: 5px;">
-				<div class="btn-group input-prepend input-append" style="text-align: center;"><span class="btn btn-mini icon-move move_tab add-on"></span></span><span class="add-on">{{ _('Size') }}</span><input class="input-mini" type="number" min="1" max="12" data-bind="value: scaffolding"></input><span class="btn btn-mini btn-danger icon-trash add-on" data-bind="click: $root.removeTab"></span><span class="add-on" data-bind="text: name"></div>
+				<div class="btn-group input-prepend input-append" style="text-align: center;"><span class="btn btn-mini icon-move move_tab add-on"></span><span class="btn btn-mini btn-danger icon-trash add-on" data-bind="click: $root.removeTab"></span><span class="add-on" data-bind="text: name"></div>
 			</div>
 		</div>
 	</div>

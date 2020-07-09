@@ -15,7 +15,8 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 			width="",
 			content_width="",
 			resize_navbar=True,
-			positions={}
+			positions={},
+			sizes={}
 		)
 
 	##-- Template mixin

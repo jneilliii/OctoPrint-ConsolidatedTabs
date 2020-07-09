@@ -6,9 +6,9 @@
  */
 $(function() {
 	function ConsolidatedtabsViewModel(parameters) {
-		var self = this;
+        const self = this;
 
-		self.controlViewModel = parameters[0];
+        self.controlViewModel = parameters[0];
 		self.temperatureViewModel = parameters[1];
 		self.settings = parameters[2];
 		self.touchui = parameters[3];
@@ -20,17 +20,16 @@ $(function() {
 		self.tab_callbacks = ko.observable({});
 		self.required_callbacks = {onTabChange: {}, onAfterTabChange: {}};
 		self.assignedTabs = ko.pureComputed(function(){
-								var tabs = ko.utils.arrayMap(self.settings.settings.plugins.consolidatedtabs.tab_order(), function(tab) {
-										return tab.selector();
-									});
-								return tabs;
+            return ko.utils.arrayMap(self.settings.settings.plugins.consolidatedtabs.tab_order(), function (tab) {
+                                    return tab.selector();
+                                });
 							});
 		self.unassignedTabs = ko.pureComputed(function() {
 								//find out the categories that are missing from uniqueNames
-								var differences = ko.utils.compareArrays(self.availableTabs().sort(), self.assignedTabs().sort());
-								//return a flat list of differences
-								var results = [];
-								ko.utils.arrayForEach(differences, function(difference) {
+            const differences = ko.utils.compareArrays(self.availableTabs().sort(), self.assignedTabs().sort());
+            //return a flat list of differences
+            const results = [];
+            ko.utils.arrayForEach(differences, function(difference) {
 									if(difference.status === "deleted") {
 										results.push(difference.value);
 									}
@@ -49,7 +48,7 @@ $(function() {
 		}
 
 		self.onAfterBinding = function(){
-			self.active_settings = ko.toJSON(self.settings.settings.plugins.consolidatedtabs);
+			self.active_settings = ko.toJSON(self.settings.settings.plugins.consolidatedtabs.tab_order);
 			$('ul#tabs li:not(.dropdown)').each(function(){
 				if($(this).attr('id') !== 'tab_plugin_consolidatedtabs_link'){
 					self.availableTabs.push({id: ko.observable($(this).attr('id')),
@@ -62,7 +61,7 @@ $(function() {
 		}
 
 		self.onEventSettingsUpdated = function(){
-			if(ko.toJSON(self.settings.settings.plugins.consolidatedtabs) !== self.active_settings) {
+			if(ko.toJSON(self.settings.settings.plugins.consolidatedtabs.tab_order) !== self.active_settings) {
 				$('#reloadui_overlay_wrapper > div > div > p:nth-child(2)').html('Consolidated Temp Control layout changes detected, you must reload now for these new changes to take effect. This will not interrupt any print jobs you might have ongoing.');
 				$('#reloadui_overlay').modal();
 			}
@@ -72,35 +71,28 @@ $(function() {
 		self.onTabChange = function(current, previous) {
 			if(current === "#tab_plugin_consolidatedtabs"){
 				console.log(self.required_callbacks);
-				for (callback in self.required_callbacks.onTabChange){
+				for (let callback in self.required_callbacks.onTabChange){
 					console.log(callback);
 					self.required_callbacks.onTabChange[callback].isActive = true;
 					self.required_callbacks.onTabChange[callback].onTabChange('#'+callback,previous);
 				}
 			}
-/* 			if((current === "#tab_plugin_consolidatedtabs") || (current === "#temp") || (current === "#control") || (current === "#tab_plugin_webcamtab")) {
-				var selected = OctoPrint.coreui.selectedTab;
-				if(self.webcamtab) {
-					OctoPrint.coreui.selectedTab = "#tab_plugin_webcamtab";
-					self.controlViewModel.onTabChange("#tab_plugin_webcamtab", previous);
-				} else {
-					OctoPrint.coreui.selectedTab = "#control";
-					self.controlViewModel.onTabChange("#control", previous);
-				}
-				OctoPrint.coreui.selectedTab = selected;
-			} else if(previous === "#tab_plugin_consolidatedtabs") {
-				self.controlViewModel.onTabChange(current, "#control");
-			} */
 		};
 
 		self.mouseDownCallback = function(e) {
-			if(e.ctrlKey==0) $('div.panel.draggable').removeClass('ui-selected');
+			if(e.ctrlKey===0) $('div.panel.draggable').removeClass('ui-selected');
 			$(this).parent().addClass('ui-selected');
 		}
 
 		self.savePosition = function(ui){
-			var settings_to_save = {positions: {}};
-			settings_to_save.positions[ui.helper.attr('id')] = ui.position;
+            const settings_to_save = {positions: {}};
+            settings_to_save.positions[ui.helper.attr('id')] = ui.position;
+			OctoPrint.settings.savePluginSettings('consolidatedtabs',settings_to_save).done(function(data){self.onEventSettingsUpdated()});
+		}
+
+		self.saveSize = function(ui){
+            const settings_to_save = {sizes: {}};
+            settings_to_save.sizes[ui.helper.attr('id')] = ui.size;
 			OctoPrint.settings.savePluginSettings('consolidatedtabs',settings_to_save).done(function(data){self.onEventSettingsUpdated()});
 		}
 
@@ -129,11 +121,17 @@ $(function() {
 						self.required_callbacks.onAfterTabChange[tab.selector().replace('#','')] = self.tab_callbacks()[tab.selector().replace('#','')];
 					}
 				}
-				$(tab.selector()).appendTo(tab.selector() + '_panel > div.panel-body').removeClass('tab-pane');
+				let tab_id = tab.selector().replace('#','') + '_panel';
+				let position_left = (self.settings.settings.plugins.consolidatedtabs.positions[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.positions[tab_id].left() + 'px') : 'auto';
+				let position_top = (self.settings.settings.plugins.consolidatedtabs.positions[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.positions[tab_id].top() + 'px') : 'auto';
+				let size_width = (self.settings.settings.plugins.consolidatedtabs.sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.sizes[tab_id].width() + 'px') : '33%';
+				let size_height = (self.settings.settings.plugins.consolidatedtabs.sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.sizes[tab_id].height() + 'px') : 'auto';
+				$('<div class="panel panel-default draggable resizable" id="' + tab.selector().replace('#','') + '_panel" style="width: ' + size_width + '\; height: ' + size_height + '\; left: ' + position_left + '\; top: ' + position_top + '\;"><div class="panel-heading"><span class="panel-mover">'+tab.name()+'</span><i class="icon icon-move panel-mover pull-right"></i></div><div class="panel-body"></div></div>').appendTo('#tab_plugin_consolidatedtabs > div.row-fluid');
+				$(tab.selector()).appendTo(tab.selector()+'_panel > .panel-body').removeClass('tab-pane');
 				$('#' + tab.id()).remove();
-				$(tab.selector() + '_panel').css({top: self.get_position_top(tab.selector().replace('#','') + '_panel'), left: self.get_position_left(tab.selector().replace('#','') + '_panel')});
 			});
-			$('div.panel.draggable').draggable({cancel: '.unsortable', handle: '.panel-mover', containment: '#tab_plugin_consolidatedtabs > div.row-fluid', scroll: false, stack: 'div.panel', zIndex: 100, stop: function( event, ui ) {self.savePosition(ui)}});
+			$('div.panel.draggable').draggable({scroll: true, snap: true, handle: '.panel-mover', containment: 'parent', scroll: false, stack: 'div.panel', zIndex: 100, stop: function( event, ui ) {self.savePosition(ui)}});
+			$('div.panel.resizable').resizable({cancel: '.panel-heading', handles: 'e', stop: function( event, ui ) {self.saveSize(ui)} });
 			$('div.panel.draggable .panel-heading').on('mousedown', self.mouseDownCallback);
 
 			// OctoPrint container adjustments
@@ -151,23 +149,23 @@ $(function() {
 				$('#navbar > div.navbar-inner > div.row-fluid > div.nav-collapse').css({'padding-right':'20px'});
 			}
 
-			var selected = OctoPrint.coreui.selectedTab;
-			if(self.webcamtab) {
+            const selected = OctoPrint.coreui.selectedTab;
+            if(self.webcamtab) {
 				OctoPrint.coreui.selectedTab = "#tab_plugin_webcamtab";
 			} else {
 				OctoPrint.coreui.selectedTab = "#control";
 			}
 			self.controlViewModel.onAllBound(allViewModels);
 			OctoPrint.coreui.selectedTab = selected;
-			if(selected == "#tab_plugin_consolidatedtabs" || selected == "#temp") {
+			if(selected === "#tab_plugin_consolidatedtabs" || selected === "#temp") {
 				self.temperatureViewModel._initializePlot();
 			}
 		};
 
 		self.controlViewModel.onBrowserTabVisibilityChange = function(status) {
 			if(status) {
-				var selected = OctoPrint.coreui.selectedTab;
-				if(self.webcamtab) {
+                const selected = OctoPrint.coreui.selectedTab;
+                if(self.webcamtab) {
 					OctoPrint.coreui.selectedTab = "#tab_plugin_webcamtab";
 				} else {
 					OctoPrint.coreui.selectedTab = "#control";
@@ -182,7 +180,7 @@ $(function() {
 		// fix temperature tab
 		self.onAfterTabChange = function(current, previous) {
 			if(current === "#tab_plugin_consolidatedtabs"){
-				for (callback in self.required_callbacks.onAfterTabChange){
+				for (let callback in self.required_callbacks.onAfterTabChange){
 					console.log(callback);
 					self.required_callbacks.onAfterTabChange[callback].isActive = true;
 					self.required_callbacks.onAfterTabChange[callback].onAfterTabChange('#'+callback, previous);
@@ -195,7 +193,7 @@ $(function() {
 					self.temperatureViewModel.updatePlot();
 				}
 				self.temperatureViewModel.onAfterTabChange("#temp", previous);
-			} 
+			}
 		}
 
 		self.addTab = function(data) {
