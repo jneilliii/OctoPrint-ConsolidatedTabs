@@ -131,7 +131,7 @@ $(function() {
 				$('#' + tab.id()).remove();
 			});
 			$('div.panel.draggable').draggable({scroll: true, snap: true, handle: '.panel-mover', containment: 'parent', scroll: false, stack: 'div.panel', zIndex: 100, stop: function( event, ui ) {self.savePosition(ui)}});
-			$('div.panel.resizable').resizable({cancel: '.panel-heading', handles: 'e', stop: function( event, ui ) {self.saveSize(ui)} });
+			$('div.panel.resizable').resizable({cancel: '.panel-heading', snap: true, handles: 'e', stop: function( event, ui ) {self.saveSize(ui)} });
 			$('div.panel.draggable .panel-heading').on('mousedown', self.mouseDownCallback);
 
 			// OctoPrint container adjustments
