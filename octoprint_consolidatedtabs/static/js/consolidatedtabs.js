@@ -62,7 +62,7 @@ $(function() {
 
 		self.onEventSettingsUpdated = function(){
 			if(ko.toJSON(self.settings.settings.plugins.consolidatedtabs.tab_order) !== self.active_settings) {
-				$('#reloadui_overlay_wrapper > div > div > p:nth-child(2)').html('Consolidated Temp Control layout changes detected, you must reload now for these new changes to take effect. This will not interrupt any print jobs you might have ongoing.');
+				$('#reloadui_overlay_wrapper > div > div > p:nth-child(2)').html('Consolidated Tabs changes detected, you must reload now for these new changes to take effect. This will not interrupt any print jobs you might have ongoing.');
 				$('#reloadui_overlay').modal();
 			}
 		}
@@ -195,6 +195,15 @@ $(function() {
 				self.temperatureViewModel.onAfterTabChange("#temp", previous);
 			}
 		}
+
+		self.resetPanels = function() {
+		    self.settings.settings.plugins.consolidatedtabs.positions({});
+		    self.settings.settings.plugins.consolidatedtabs.sizes({});
+		    OctoPrint.settings.save().done(function(){
+				$('#reloadui_overlay_wrapper > div > div > p:nth-child(2)').html('Consolidated Tabs positions and sizes reset, you must reload now for these new changes to take effect. This will not interrupt any print jobs you might have ongoing.');
+				$('#reloadui_overlay').modal();
+            });
+        }
 
 		self.addTab = function(data) {
 			self.settings.settings.plugins.consolidatedtabs.tab_order.push(data);
