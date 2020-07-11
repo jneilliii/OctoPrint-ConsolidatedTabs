@@ -24,7 +24,8 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 
 	##-- Template mixin
 	def get_template_configs(self):
-		if self._settings.global_get(["appearance", "name"]) is not None:
+		if self._settings.global_get(["appearance", "name"]) is not None and self._settings.global_get(["appearance", "name"]) != "":
+			self._logger.info(self._settings.global_get(["appearance", "name"]))
 			tab_name = self._settings.global_get(["appearance", "name"])
 		else:
 			tab_name = "OctoPrint"
