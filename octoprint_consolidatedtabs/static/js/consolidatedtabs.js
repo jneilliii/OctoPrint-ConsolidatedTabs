@@ -91,16 +91,6 @@ $(function() {
             }
         }
 
-		// fix control tab
-		self.onTabChange = function(current, previous) {
-			if(current === "#tab_plugin_consolidatedtabs"){
-				for (let callback in self.required_callbacks.onTabChange){
-					self.required_callbacks.onTabChange[callback].isActive = true;
-					self.required_callbacks.onTabChange[callback].onTabChange('#'+callback,previous);
-				}
-			}
-		};
-
 		self.mouseDownCallback = function(e) {
 			if(e.ctrlKey===0) $('div.panel.draggable').removeClass('ui-selected');
 			$(this).parent().addClass('ui-selected');
@@ -201,6 +191,21 @@ $(function() {
 				OctoPrint.coreui.selectedTab = selected;
 			} else {
 				self.controlViewModel._disableWebcam();
+			}
+		};
+
+		self.onStartupComplete = function(){
+            self.onTabChange("#tab_plugin_consolidatedtabs", null);
+            self.onAfterTabChange("#tab_plugin_consolidatedtabs", null);
+        }
+
+		// fix control tab
+		self.onTabChange = function(current, previous) {
+			if(current === "#tab_plugin_consolidatedtabs"){
+				for (let callback in self.required_callbacks.onTabChange){
+					self.required_callbacks.onTabChange[callback].isActive = true;
+					self.required_callbacks.onTabChange[callback].onTabChange('#'+callback,previous);
+				}
 			}
 		};
 
