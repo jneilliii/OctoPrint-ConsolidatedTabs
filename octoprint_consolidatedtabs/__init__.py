@@ -6,7 +6,8 @@ import octoprint.plugin
 
 class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 							 octoprint.plugin.AssetPlugin,
-							 octoprint.plugin.TemplatePlugin):
+							 octoprint.plugin.TemplatePlugin,
+							 octoprint.plugin.SimpleApiPlugin):
 
 	##~~ SettingsPlugin mixin
 
@@ -16,14 +17,15 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 			width="",
 			content_width="",
 			resize_navbar=True,
-			positions={},
-			sizes={}
+			panel_positions={},
+			panel_sizes={},
+			remove_title=False
 		)
 
 	##-- Template mixin
 	def get_template_configs(self):
-		if self._settings.global_get(["appearance", "title"]) is not None:
-			tab_name = self._settings.global_get(["appearance", "title"])
+		if self._settings.global_get(["appearance", "name"]) is not None:
+			tab_name = self._settings.global_get(["appearance", "name"])
 		else:
 			tab_name = "OctoPrint"
 
@@ -36,9 +38,28 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 
 	def get_assets(self):
 		return dict(
-			js=["js/jquery-ui.min.js", "js/jquery.ui.resizable.snap.ext.js", "js/consolidatedtabs.js"],
+			js=["js/jquery-ui.min.js", "js/jquery.ui.resizable.snap.ext.js", "js/knockout-sortable.js", "js/consolidatedtabs.js"],
 			css=["css/consolidatedtabs.css"]
 		)
+
+	##~~ SimpleApiPlugin mixin
+
+	def get_api_commands(self):
+		return dict(
+			reset_positions=[],
+			reset_sizes=[]
+		)
+
+	def on_api_command(self, command, data):
+		import flask
+		if command == "reset_positions":
+			self._settings.set(["panel_positions"], {})
+			self._settings.save()
+			return flask.jsonify(positions_reset=True)
+		if command == "reset_sizes":
+			self._settings.set(["panel_sizes"], {})
+			self._settings.save()
+			return flask.jsonify(sizes_reset=True)
 
 	##~~ Softwareupdate hook
 
