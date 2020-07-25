@@ -25,9 +25,9 @@ or manually using this URL:
 * Clear All Positions and Sizes: use the buttons to clear any position or size customizations, helpful when panels get moved off screen.
 
 ## Most Recent Release
-**[0.0.1](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.0.1)** (07/26/2020)
+**[0.0.4](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.0.4)** (07/26/2020)
 
-* Initial Release
+* Fixed terminal binding (autoscroll) if tab name is hidden and all tabs combined
 
 **[All Releases](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases)**
 
