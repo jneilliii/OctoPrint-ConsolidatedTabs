@@ -27,7 +27,7 @@
 	<div class="row-fluid">
 		<div class="row-fluid" style="padding-top: 3px;">
 			<label class="checkbox">
-			<input type="checkbox" data-bind="checked: settings.settings.plugins.consolidatedtabs.remove_title" /> {{ _('Remove Tab Name') }}
+			<input type="checkbox" data-bind="checked: settings.settings.plugins.consolidatedtabs.remove_title, disable: unassignedTabs().length > 0" /> {{ _('Remove Tab Name') }}
 			</label>
 		</div>
 	</div>
