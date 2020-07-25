@@ -24,6 +24,9 @@ or manually using this URL:
 * Overall width: width to set the overall page container, useful for widescreen displays.
 * Clear All Positions and Sizes: use the buttons to clear any position or size customizations, helpful when panels get moved off screen.
 
+## To-Do
+* [ ] Figure out how to get rid of the extra whitespace at the bottom of the page after panels are positioned.
+
 ## Most Recent Release
 **[0.0.4](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.0.4)** (07/26/2020)
 
