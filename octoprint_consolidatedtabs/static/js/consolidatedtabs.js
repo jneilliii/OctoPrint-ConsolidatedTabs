@@ -142,9 +142,9 @@ $(function() {
 				$(tab.selector()).appendTo(tab.selector()+'_panel > .panel-body').removeClass('tab-pane');
 				$('#' + tab.id()).remove();
 				if(self.settings.settings.plugins.consolidatedtabs.remove_title() && self.unassignedTabs().length === 0){
-				    $('#tab_plugin_consolidatedtabs_link').remove();
-				    $('ul#tabs').remove();
-				    $('div#tabs_content').css({'padding-top': '0px', 'padding-left': '0px', 'padding-right': '5px', border: '0px'});
+				    $('#tab_plugin_consolidatedtabs_link').css({'border':'0px'});
+				    $('ul#tabs').css({'border-bottom':'0px'});
+				    $('div#tabs_content').css({'padding-top': '0px', 'padding-left': '0px', 'padding-right': '5px', border: '0px', 'margin-top': '-37px'});
                 }
 			});
 			$('div.panel.draggable').draggable({scroll: true, snap: true, handle: '.panel-mover', containment: 'parent', stack: 'div.panel', zIndex: 100, stop: function( event, ui ) {self.savePosition(ui)}});
