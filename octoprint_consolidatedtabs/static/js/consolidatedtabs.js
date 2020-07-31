@@ -73,10 +73,8 @@ $(function() {
             if(self.remove_title !== self.settings.settings.plugins.consolidatedtabs.remove_title()){
                 return true;
             }
-            if(self.tab_width !== self.settings.settings.plugins.consolidatedtabs.width()){
-                return true;
-            }
-		    return false;
+            return self.tab_width !== self.settings.settings.plugins.consolidatedtabs.width();
+
         }
 
 		self.onEventSettingsUpdated = function(){
@@ -99,13 +97,13 @@ $(function() {
 		self.savePosition = function(ui){
             const settings_to_save = {panel_positions: {}};
             settings_to_save.panel_positions[ui.helper.attr('id')] = ui.position;
-			OctoPrint.settings.savePluginSettings('consolidatedtabs',settings_to_save).done(function(data){self.onEventSettingsUpdated()});
+			OctoPrint.settings.savePluginSettings('consolidatedtabs',settings_to_save).done(function(){self.onEventSettingsUpdated()});
 		}
 
 		self.saveSize = function(ui){
             const settings_to_save = {panel_sizes: {}};
             settings_to_save.panel_sizes[ui.helper.attr('id')] = ui.size;
-			OctoPrint.settings.savePluginSettings('consolidatedtabs',settings_to_save).done(function(data){self.onEventSettingsUpdated()});
+			OctoPrint.settings.savePluginSettings('consolidatedtabs',settings_to_save).done(function(){self.onEventSettingsUpdated()});
 		}
 
 		self.onAllBound = function(allViewModels) {
@@ -142,7 +140,7 @@ $(function() {
 				$(tab.selector()).appendTo(tab.selector()+'_panel > .panel-body').removeClass('tab-pane');
 				$('#' + tab.id()).remove();
 				if(self.settings.settings.plugins.consolidatedtabs.remove_title() && self.unassignedTabs().length === 0){
-				    $('#tab_plugin_consolidatedtabs_link').css({'border':'0px'});
+				    $('#tab_plugin_consolidatedtabs_link').css({border: '0px', width: '0px', overflow: 'hidden'});
 				    $('ul#tabs').css({'border-bottom':'0px'});
 				    $('div#tabs_content').css({'padding-top': '0px', 'padding-left': '0px', 'padding-right': '5px', border: '0px', 'margin-top': '-37px'});
                 }
