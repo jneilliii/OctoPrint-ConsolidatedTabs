@@ -192,10 +192,10 @@ $(function() {
 			}
 		};
 
-		self.onStartupComplete = function(){
+/*		self.onStartupComplete = function(){
             self.onTabChange("#tab_plugin_consolidatedtabs", null);
             self.onAfterTabChange("#tab_plugin_consolidatedtabs", null);
-        }
+        }*/
 
 		// fix control tab
 		self.onTabChange = function(current, previous) {
