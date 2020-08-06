@@ -111,8 +111,6 @@ $(function() {
 			ko.utils.arrayForEach(allViewModels,function(item){
 				if((item.onTabChange || item.onAfterTabChange) && item !== self){
 					ko.utils.arrayForEach(item._bindings,function(binding){
-					        console.log(typeof binding);
-					        console.log(binding);
 					        if(typeof binding == "object"){
 					            self.tab_callbacks()[binding.id] = item;
                             } else {
