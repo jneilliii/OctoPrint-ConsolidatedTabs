@@ -28,7 +28,7 @@ or manually using this URL:
 * [ ] Figure out how to get rid of the extra whitespace at the bottom of the page after panels are positioned.
 
 ## Most Recent Release
-**[0.0.7](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.0.7)** (07/26/2020)
+**[0.0.7](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.0.7)** (08/06/2020)
 
 * Remove debugging noise
 
