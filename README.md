@@ -24,6 +24,12 @@ or manually using this URL:
 * Overall width: width to set the overall page container, useful for widescreen displays.
 * Clear All Positions and Sizes: use the buttons to clear any position or size customizations, helpful when panels get moved off screen.
 
+## Themeify
+
+If using Themeify you will want to add extra settings to your Advanced options. These are the relevant css selectors that you will need to adjust.
+
+![screenshot themeify](screenshot_themeify.png)
+
 ## To-Do
 * [ ] Figure out how to get rid of the extra whitespace at the bottom of the page after panels are positioned.
 
