@@ -15,7 +15,7 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 		return dict(
 			tab_order=[],
 			width="",
-			content_width="",
+			full_width=False,
 			resize_navbar=True,
 			panel_positions={},
 			panel_sizes={},

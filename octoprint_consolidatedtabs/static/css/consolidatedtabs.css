@@ -1,6 +1,14 @@
+div#tab_plugin_consolidatedtabs > div.row-fluid {
+	display: flex;
+	flex-flow: row wrap;
+}
+
+div#tabs_content {
+	height: 100%;
+}
+
 .panel {
 	padding: 15px;
-	margin-bottom: 20px;
 	background-color: #ffffff;
 	border: 1px solid #dddddd;
 	border-radius: 4px;
@@ -10,7 +18,7 @@
 }
 
 .panel.draggable.ui-selected {
-	z-index: 100;
+	z-index: 1000;
 }
 
 .panel-heading {
@@ -89,7 +97,8 @@
 }
 
 .panel .panel-body {
-	overflow: hidden;
+	overflow: visible;
+	height: 100%;
 }
 
 .ui-resizable {

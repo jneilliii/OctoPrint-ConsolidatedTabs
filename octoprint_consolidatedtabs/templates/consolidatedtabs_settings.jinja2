@@ -31,8 +31,13 @@
 			</label>
 		</div>
 	</div>
-	<div class="row-fluid"><h5><u>{{ _('Overall Width') }}</u></h5></div>
-	<div class="row-fluid input-append"><input type="number" class="input input-small" data-bind="value: settings.settings.plugins.consolidatedtabs.width"/><span class="add-on">px</span></div>
+	<div class="row-fluid">
+		<div class="row-fluid" style="padding-top: 3px;">
+			<label class="checkbox">
+			<input type="checkbox" data-bind="checked: settings.settings.plugins.consolidatedtabs.full_width" /> {{ _('Use Full Width of Browser') }}
+			</label>
+		</div>
+	</div>
     <div class="row-fluid"><h5><u>{{ _('Clear All Positions and Sizes') }}</u></h5></div>
     <div class="row-fluid"><button class="btn" data-bind="click: resetPositions, disable: resetting_positions"><i class="fa fa-spinner fa-spin" style="margin-right: 10px; display: none;" data-bind="visible: resetting_positions()"></i>{{ _('Clear Positions') }}</button> <button class="btn" data-bind="click: resetSizes, disable: resetting_sizes"><i class="fa fa-spinner fa-spin" style="margin-right: 10px; display: none;" data-bind="visible: resetting_sizes()"></i>{{ _('Clear Sizes') }}</button></div>
 </form>

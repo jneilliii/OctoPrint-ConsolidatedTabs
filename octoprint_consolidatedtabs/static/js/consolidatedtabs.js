@@ -46,19 +46,39 @@ $(function() {
 								return results;
 							});
 
+		self.onStartup = function(){
+		    $(window).on('resize', self.resize_container);
+        }
+
+        self.resize_container = function(){
+		    // OctoPrint container adjustments
+            if(self.settings.settings.plugins.consolidatedtabs.full_width()) {
+                $('div.container.octoprint-container').css({'width': '100%'});
+                $('#sidebar').css({'margin-left': '40px'});
+                $('div.tabbable.span8').css({'width': ($(window).innerWidth() - $('div#sidebar').outerWidth(true) - 40).toString() + 'px'});
+            }
+
+			// navbar adjustments
+			if(self.settings.settings.plugins.consolidatedtabs.resize_navbar()){
+				$('#navbar > div.navbar-inner > div.container').css({'width':'100%'});
+				$('#navbar > div.navbar-inner > div.row-fluid > div.nav-collapse').css({'padding-right':'20px'});
+			}
+        }
+
 		self.onAfterBinding = function(){
 			self.active_settings = ko.toJSON(self.settings.settings.plugins.consolidatedtabs.tab_order);
 			self.remove_title = self.settings.settings.plugins.consolidatedtabs.remove_title();
 			self.tab_width = self.settings.settings.plugins.consolidatedtabs.width();
+			self.full_width = self.settings.settings.plugins.consolidatedtabs.full_width();
 			$('ul#tabs li:not(.dropdown)').each(function(){
 				if($(this).attr('id') !== 'tab_plugin_consolidatedtabs_link' && self.assignedTabsByID().indexOf($(this).attr('id')) < 0){
 					self.availableTabs.push({id: ko.observable($(this).attr('id')),
 								selector: ko.observable($(this).children('a').attr('href')),
-								name: $(this).children('a').attr('title') ? ko.observable($(this).children('a').attr('title')) : ko.observable($(this).children('a').text()),
-								scaffolding: ko.observable('8')
+								name: $(this).children('a').attr('title') ? ko.observable($(this).children('a').attr('title')) : ko.observable($(this).children('a').text())
 								});
 				}
 			});
+			self.resize_container();
 		}
 
 		self.showReloadDialog = function(){
@@ -71,6 +91,9 @@ $(function() {
                 return true;
             }
             if(self.remove_title !== self.settings.settings.plugins.consolidatedtabs.remove_title()){
+                return true;
+            }
+            if(self.full_width !== self.settings.settings.plugins.consolidatedtabs.full_width()){
                 return true;
             }
             return self.tab_width !== self.settings.settings.plugins.consolidatedtabs.width();
@@ -138,7 +161,7 @@ $(function() {
 				let tab_id = tab.selector().replace('#','') + '_panel';
 				let position_left = (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id].left() + 'px') : 'auto';
 				let position_top = (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id].top() + 'px') : 'auto';
-				let size_width = (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id].width() + 'px') : '33%';
+				let size_width = (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id].width() + 'px') : '31%';
 				let size_height = (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id].height() + 'px') : 'auto';
 				$('<div class="panel panel-default draggable resizable" id="' + tab.selector().replace('#','') + '_panel" style="width: ' + size_width + '\; height: ' + size_height + '\; left: ' + position_left + '\; top: ' + position_top + '\;"><div class="panel-heading"><span class="panel-mover">'+tab.name()+'</span><i class="icon icon-move panel-mover pull-right"></i></div><div class="panel-body"></div></div>').appendTo('#tab_plugin_consolidatedtabs > div.row-fluid');
 				$(tab.selector()).appendTo(tab.selector()+'_panel > .panel-body').removeClass('tab-pane');
@@ -149,24 +172,10 @@ $(function() {
 				    $('div#tabs_content').css({'padding-top': '0px', 'padding-left': '0px', 'padding-right': '5px', border: '0px', 'margin-top': '-37px'});
                 }
 			});
-			$('div.panel.draggable').draggable({scroll: true, snap: true, handle: '.panel-mover', containment: 'parent', stack: 'div.panel', zIndex: 100, stop: function( event, ui ) {self.savePosition(ui)}});
-			$('div.panel.resizable').resizable({snap: true, handles: 's, w, e', stop: function( event, ui ) {self.saveSize(ui)} });
+			$('div.panel.draggable').draggable({scroll: true, snap: '.panel', snapMode: 'outer', snapTolerance: 5, handle: '.panel-mover', containment: 'parent', stack: 'div.panel', zIndex: 100, stop: function( event, ui ) {self.savePosition(ui)}});
+			$('div.panel.resizable').resizable({handles: 's, w, e', containment: 'parent', stop: function( event, ui ) {self.saveSize(ui)}});
+			$('div#tabs_content').resizable({handles: 's'});
 			$('div.panel.draggable .panel-heading').on('mousedown', self.mouseDownCallback);
-
-			// OctoPrint container adjustments
-			if(self.settings.settings.plugins.consolidatedtabs.width().length > 0){
-				$('div.octoprint-container').css({'min-width':self.settings.settings.plugins.consolidatedtabs.width() + 'px'});
-
-				// tabs container adjustments
-				tabs_width = ($(window).innerWidth() - $('#sidebar').outerWidth() - 40).toString() + 'px';
-				$('div.tabbable.span8').css({'width':tabs_width, 'float': 'left'});
-			}
-
-			// navbar adjustments
-			if(self.settings.settings.plugins.consolidatedtabs.resize_navbar()){
-				$('#navbar > div.navbar-inner > div.container').css({'width':'100%'});
-				$('#navbar > div.navbar-inner > div.row-fluid > div.nav-collapse').css({'padding-right':'20px'});
-			}
 
             const selected = OctoPrint.coreui.selectedTab;
             if(self.webcamtab) {
