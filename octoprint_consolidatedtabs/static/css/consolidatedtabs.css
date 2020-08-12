@@ -1,5 +1,5 @@
 div#tab_plugin_consolidatedtabs > div.row-fluid {
-	display: flex;
+	display: inline-flex;
 	flex-flow: row wrap;
 }
 
@@ -170,4 +170,9 @@ div#tabs_content {
 	height: 9px;
 	right: -5px;
 	top: -5px;
+}
+
+div.footer {
+	padding-left: 20px;
+    padding-right: 20px;
 }

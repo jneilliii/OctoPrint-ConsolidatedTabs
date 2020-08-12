@@ -118,15 +118,23 @@ $(function() {
 		}
 
 		self.savePosition = function(ui){
+            $('.ui-resizable-handle, i.ui-draggable-handle, .panel-heading, body').css({'cursor':'wait'});
             const settings_to_save = {panel_positions: {}};
             settings_to_save.panel_positions[ui.helper.attr('id')] = ui.position;
-			OctoPrint.settings.savePluginSettings('consolidatedtabs',settings_to_save).done(function(){self.onEventSettingsUpdated()});
+			OctoPrint.settings.savePluginSettings('consolidatedtabs',settings_to_save).done(function(){
+			    self.onEventSettingsUpdated();
+                $('.ui-resizable-handle, i.ui-draggable-handle, .panel-heading, body').css({'cursor':''});
+			});
 		}
 
 		self.saveSize = function(ui){
+            $('.ui-resizable-handle, i.ui-draggable-handle, .panel-heading, body').css({'cursor':'wait'});
             const settings_to_save = {panel_sizes: {}};
             settings_to_save.panel_sizes[ui.helper.attr('id')] = ui.size;
-			OctoPrint.settings.savePluginSettings('consolidatedtabs',settings_to_save).done(function(){self.onEventSettingsUpdated()});
+			OctoPrint.settings.savePluginSettings('consolidatedtabs',settings_to_save).done(function(){
+			    self.onEventSettingsUpdated();
+                $('.ui-resizable-handle, i.ui-draggable-handle, .panel-heading, body').css({'cursor':''});
+			});
 		}
 
 		self.onAllBound = function(allViewModels) {
@@ -161,7 +169,7 @@ $(function() {
 				let tab_id = tab.selector().replace('#','') + '_panel';
 				let position_left = (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id].left() + 'px') : 'auto';
 				let position_top = (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id].top() + 'px') : 'auto';
-				let size_width = (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id].width() + 'px') : '31%';
+				let size_width = (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id].width() + 'px') : '100%';
 				let size_height = (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id].height() + 'px') : 'auto';
 				$('<div class="panel panel-default draggable resizable" id="' + tab.selector().replace('#','') + '_panel" style="width: ' + size_width + '\; height: ' + size_height + '\; left: ' + position_left + '\; top: ' + position_top + '\;"><div class="panel-heading"><span class="panel-mover">'+tab.name()+'</span><i class="icon icon-move panel-mover pull-right"></i></div><div class="panel-body"></div></div>').appendTo('#tab_plugin_consolidatedtabs > div.row-fluid');
 				$(tab.selector()).appendTo(tab.selector()+'_panel > .panel-body').removeClass('tab-pane');
@@ -172,8 +180,8 @@ $(function() {
 				    $('div#tabs_content').css({'padding-top': '0px', 'padding-left': '0px', 'padding-right': '5px', border: '0px', 'margin-top': '-37px'});
                 }
 			});
-			$('div.panel.draggable').draggable({scroll: true, snap: '.panel', snapMode: 'outer', snapTolerance: 5, handle: '.panel-mover', containment: 'parent', stack: 'div.panel', zIndex: 100, stop: function( event, ui ) {self.savePosition(ui)}});
-			$('div.panel.resizable').resizable({handles: 's, w, e', containment: 'parent', stop: function( event, ui ) {self.saveSize(ui)}});
+			$('div.panel.draggable').draggable({scroll: true, snap: '.panel', snapMode: 'outer', snapTolerance: 5, handle: '.panel-mover', containment: '#tabs_content', stack: 'div.panel', zIndex: 100, stop: function( event, ui ) {self.savePosition(ui)}});
+			$('div.panel.resizable').resizable({handles: 's, w, e', containment: '#tabs_content', stop: function( event, ui ) {self.saveSize(ui)}});
 			$('div#tabs_content').resizable({handles: 's'});
 			$('div.panel.draggable .panel-heading').on('mousedown', self.mouseDownCallback);
 
