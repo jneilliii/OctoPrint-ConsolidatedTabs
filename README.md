@@ -4,7 +4,8 @@ This plugin will allow you to combine the selected tabs into a single tab as dra
 
 ![screenshot tab](screenshot_tab.png)
 
-**Note:** Initial positioning and sizing can be a little tricky due to the snapping feature between panels. You may have to move/resize and refresh the page a couple of times to get everything perfectly aligned. Once you're happy with the positions and sizes you should not have to mess with them again.
+
+**Note:** Initial positioning and sizing can be difficult due to the snapping feature between panels. You may have to move/resize and refresh the page a couple of times to get everything perfectly aligned. See [Tips](#Tips) for more information.
 
 ## Setup
 
@@ -21,8 +22,16 @@ or manually using this URL:
 * Uncombined Tabs: tabs that have not been combined and will remain as their own tab.
 * Resize Navbar: whether to resize the width of the top navbar to 100% or not.
 * Remove Tab Name: don't show the name of the consolidated tab, only possible if all tabs are combined.
-* Overall width: width to set the overall page container, useful for widescreen displays.
+* Use Full Width of Browser: If enabled the tab area will be sized to fit the entire width of the browser and the sidebar will be moved to the left.
 * Clear All Positions and Sizes: use the buttons to clear any position or size customizations, helpful when panels get moved off screen.
+
+## Tips
+
+The name of the tab, if not removed in settings, will match what is configured in OctoPrint's `Title` appearance setting.
+
+The best way to get your panels sized and positioned is to order them in the plugin's settings first in the order that you want the panels to be in the consolidated tab. The panels will wrap from left to right and top to bottom based on that order.
+
+Once ordered and the page reloads then selct the panel you want to resize and then drag the edges until the panel is at your desired size. Each panel is positioned relative to the panel that precedes it, and as a result resizing a panel will cause the other panels to move, and potentially wrap if they extend past the containing tab.
 
 ## Themeify
 
@@ -31,12 +40,13 @@ If using Themeify you will want to add extra settings to your Advanced options. 
 ![screenshot themeify](screenshot_themeify.png)
 
 ## To-Do
-* [ ] Figure out how to get rid of the extra whitespace at the bottom of the page after panels are positioned.
+* [X] ~~Figure out how to get rid of the extra whitespace at the bottom of the page after panels are positioned.~~
 
 ## Most Recent Release
-**[0.0.7](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.0.7)** (08/06/2020)
+**[0.0.8](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.0.8)** (08/15/2020)
 
-* Remove debugging noise
+* Make only selected panel resizable
+* Convert to inline-flex for containing element
 
 **[All Releases](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases)**
 

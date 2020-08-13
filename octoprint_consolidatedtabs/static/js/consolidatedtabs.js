@@ -180,10 +180,51 @@ $(function() {
 				    $('div#tabs_content').css({'padding-top': '0px', 'padding-left': '0px', 'padding-right': '5px', border: '0px', 'margin-top': '-37px'});
                 }
 			});
-			$('div.panel.draggable').draggable({scroll: true, snap: '.panel', snapMode: 'outer', snapTolerance: 5, handle: '.panel-mover', containment: '#tabs_content', stack: 'div.panel', zIndex: 100, stop: function( event, ui ) {self.savePosition(ui)}});
-			$('div.panel.resizable').resizable({handles: 's, w, e', containment: '#tabs_content', stop: function( event, ui ) {self.saveSize(ui)}});
-			$('div#tabs_content').resizable({handles: 's'});
-			$('div.panel.draggable .panel-heading').on('mousedown', self.mouseDownCallback);
+			//$('div.panel.draggable').draggable({scroll: true, snap: '.panel', snapMode: 'outer', snapTolerance: 5, handle: '.panel-heading', containment: '#tabs_content', /*stack: 'div.panel',*/ zIndex: 100, stop: function( event, ui ) {self.savePosition(ui)}});
+			//$('div.panel.resizable').resizable({handles: 's, w, e', containment: '#tabs_content', stop: function( event, ui ) {self.saveSize(ui)}});
+			//$('div#tabs_content').resizable({handles: 's'});
+			//$('div.panel.draggable .panel-heading').on('mousedown', self.mouseDownCallback);
+            $(function () {
+                'use strict';
+                var selected = $([]), offset = {top: 0, left: 0};
+                $("#tab_plugin_consolidatedtabs > div").selectable({
+                    selected: function( event, ui ) {
+                        $(ui.selected).resizable( "option", "disabled", false );
+                    },
+                    unselected: function( event, ui ) {
+                        $(ui.unselected).resizable( "option", "disabled", true );
+                    },
+                    selecting: function(event, ui){
+                        if( $(".ui-selected, .ui-selecting").length > 1) {
+                            $(ui.selecting).removeClass("ui-selecting");
+                        }
+                    }
+                });
+                $("#tab_plugin_consolidatedtabs > div > div.panel").draggable({
+                    handle : '.panel-heading i.panel-mover',
+                    containment : '#tab_plugin_consolidatedtabs > div',
+                    snap : true,
+                    start: function () {
+                        if (!$(this).is(".ui-selected")) {
+                            $(".ui-selected").removeClass("ui-selected");
+                        }
+                        selected = $(".ui-selected").each(function () {
+                            var element = $(this);
+                            element.data("offset", element.offset());
+                        });
+                        offset = $(this).offset();
+                    },
+                    drag: function (event, ui) {
+                        var draggedTop = ui.position.top - offset.top, draggedLeft = ui.position.left - offset.left;
+                        selected.not(this).each(function () {
+                            var element = $(this), off = element.data("offset");
+                            element.css({top: off.top + draggedTop, left: off.left + draggedLeft});
+                        });
+                    },
+                    stop: function( event, ui ) {self.savePosition(ui)}
+                });
+                $('div.panel.resizable').resizable({handles: 's, w, e, sw, se', disabled: true, stop: function( event, ui ) {self.saveSize(ui)}});
+            });
 
             const selected = OctoPrint.coreui.selectedTab;
             if(self.webcamtab) {

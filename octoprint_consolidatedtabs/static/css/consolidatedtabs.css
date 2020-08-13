@@ -15,10 +15,12 @@ div#tabs_content {
 	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 	z-index: 1;
+	display: block;
 }
 
 .panel.draggable.ui-selected {
-	z-index: 1000;
+	z-index: 1001;
+	border: 1px solid black;
 }
 
 .panel-heading {
@@ -33,7 +35,7 @@ div#tabs_content {
 	cursor: default;
 }
 
-.panel-heading i.ui-draggable-handle {
+.panel-heading.ui-draggable-handle {
 	cursor: move;
 }
 
@@ -99,6 +101,7 @@ div#tabs_content {
 .panel .panel-body {
 	overflow: visible;
 	height: 100%;
+	display: contents;
 }
 
 .ui-resizable {
