@@ -184,50 +184,51 @@ $(function() {
 			//$('div.panel.resizable').resizable({handles: 's, w, e', containment: '#tabs_content', stop: function( event, ui ) {self.saveSize(ui)}});
 			//$('div#tabs_content').resizable({handles: 's'});
 			//$('div.panel.draggable .panel-heading').on('mousedown', self.mouseDownCallback);
-            $(function () {
-                'use strict';
-                var selected = $([]), offset = {top: 0, left: 0};
-                $("#tab_plugin_consolidatedtabs > div").selectable({
-                    cancel: 'input,textarea,button,select,option',
-                    selected: function( event, ui ) {
-                        if(event.shiftKey) {
-                            $(ui.selected).resizable("option", "disabled", false);
-                            $(ui.selected).draggable("option", "disabled", false);
-                            $(ui.selected).addClass('panel-primary');
-                        }
-                    },
-                    unselected: function( event, ui ) {
-                        $(ui.unselected).resizable( "option", "disabled", true );
-                        $(ui.unselected).draggable( "option", "disabled", true );
-                        $(ui.unselected).removeClass('panel-primary');
-                    },
-                    unselecting: function(event, ui){
-                        /*if( $(".ui-selected, .ui-unselecting").length > 1 || event.ctrlKey ) {*/
-                        if( $(ui.unselecting).is('.ui-selected') ) {
-                            return false;
-                            $(ui.unselecting).removeClass("ui-unselecting");
-                        }
-                    },
-                    selecting: function(event, ui){
-                        if( $(".ui-selected, .ui-selecting").length > 1) {
-                            $(ui.selecting).removeClass("ui-selecting");
-                        }
+            $("#tab_plugin_consolidatedtabs > div").selectable({
+                filter: '.panel',
+                cancel: 'input,textarea,button,select,option',
+                selected: function( event, ui ) {
+                    if(event.shiftKey) {
+                        $(ui.selected).resizable("option", "disabled", false);
+                        $(ui.selected).draggable("option", "disabled", false);
+                        $(ui.selected).addClass('panel-primary');
                     }
-                });
-                $("#tab_plugin_consolidatedtabs > div > div.panel").draggable({
-                    handle : '.panel-heading',
-                    containment : '#tab_plugin_consolidatedtabs > div',
-                    snap : true,
-                    disabled: true,
-                    start: function (event, ui) {
-                        if (!$(this).is(".ui-selected")) {
-                            $(".ui-selected").removeClass("ui-selected");
-                            $(".ui-selected").removeClass('panel-primary');
-                        }
-                    },
-                    stop: function( event, ui ) {self.savePosition(ui)}
-                });
-                $('div.panel.resizable').resizable({handles: 's, w, e, sw, se', disabled: true, stop: function( event, ui ) {self.saveSize(ui)}});
+                },
+                unselected: function( event, ui ) {
+                    $(ui.unselected).resizable( "option", "disabled", true );
+                    $(ui.unselected).draggable( "option", "disabled", true );
+                    $(ui.unselected).removeClass('panel-primary');
+                },
+                unselecting: function(event, ui){
+                    /*if( $(".ui-selected, .ui-unselecting").length > 1 || event.ctrlKey ) {*/
+                    if( $(ui.unselecting).is('.ui-selected') ) {
+                        return false;
+                        $(ui.unselecting).removeClass("ui-unselecting");
+                    }
+                },
+                selecting: function(event, ui){
+                    if( $(".ui-selected, .ui-selecting").length > 1) {
+                        $(ui.selecting).removeClass("ui-selecting");
+                    }
+                }
+            });
+            $("#tab_plugin_consolidatedtabs > div > div.panel").draggable({
+                handle : '.panel-heading',
+                containment : '#tab_plugin_consolidatedtabs > div',
+                snap : true,
+                disabled: true,
+                start: function (event, ui) {
+                    if (!$(this).is(".ui-selected")) {
+                        $(".ui-selected").removeClass("ui-selected");
+                        $(".ui-selected").removeClass('panel-primary');
+                    }
+                },
+                stop: function( event, ui ) {self.savePosition(ui)}
+            });
+            $('div.panel.resizable').resizable({handles: 's, w, e, sw, se', disabled: true, stop: function( event, ui ) {self.saveSize(ui)}});
+            $('div.panel .dropdown-toggle').on('show.bs.dropdown', function(event){
+                //$(event.currentTarget).parents('div.panel').addClass('ui-selected');
+                console.log(event);
             });
 
             const selected = OctoPrint.coreui.selectedTab;
