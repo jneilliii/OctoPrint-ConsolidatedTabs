@@ -20,7 +20,7 @@ div#tabs_content {
 
 .panel.draggable.ui-selected {
 	z-index: 1001;
-	border: 1px solid black;
+	/*border: 1px solid black;*/
 }
 
 .panel-heading {
@@ -35,7 +35,7 @@ div#tabs_content {
 	cursor: default;
 }
 
-.panel-heading.ui-draggable-handle {
+div.panel-primary.ui-selected > div.panel-heading.ui-draggable-handle {
 	cursor: move;
 }
 

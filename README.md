@@ -5,7 +5,7 @@ This plugin will allow you to combine the selected tabs into a single tab as dra
 ![screenshot tab](screenshot_tab.png)
 
 
-**Note:** Initial positioning and sizing can be difficult due to the snapping feature between panels. You may have to move/resize and refresh the page a couple of times to get everything perfectly aligned. See [Tips](#Tips) for more information.
+**Note:** Initial positioning and sizing can be difficult due to the relative positioning of the panels. You may have to drag/resize and refresh the page a couple of times to get everything perfectly aligned. See [Tips](#Tips) for more information.
 
 ## Setup
 
@@ -18,20 +18,27 @@ or manually using this URL:
 
 ![screenshot settings](screenshot_settings.png)
 
-* Combined Tabs Order: all the tabs that will be combined into one tab as draggable and resizable panels.
-* Uncombined Tabs: tabs that have not been combined and will remain as their own tab.
-* Resize Navbar: whether to resize the width of the top navbar to 100% or not.
-* Remove Tab Name: don't show the name of the consolidated tab, only possible if all tabs are combined.
-* Use Full Width of Browser: If enabled the tab area will be sized to fit the entire width of the browser and the sidebar will be moved to the left.
-* Clear All Positions and Sizes: use the buttons to clear any position or size customizations, helpful when panels get moved off screen.
+- **Combined Tabs Order:** all the tabs that will be combined into one tab as a panel.
+- **Uncombined Tabs:** tabs that have not been combined and will remain as their own tab.
+- **Resize Navbar:** whether to resize the width of the top navbar to 100% or not.
+- **Remove Tab Name:** don't show the name of the consolidated tab, only possible if all tabs are combined.
+- **Use Full Width of Browser:** If enabled the tab area will be sized to fit the entire width of the browser and the sidebar will be moved to the left.
+- **Clear All Positions and Sizes:** use the buttons to clear all position or size customizations, helpful when panels get moved off screen.
 
 ## Tips
 
-The name of the tab, if not removed in settings, will match what is configured in OctoPrint's `Title` appearance setting.
+- The name of the tab will match what is configured in OctoPrint's `Title` appearance setting.
 
-The best way to get your panels sized and positioned is to order them in the plugin's settings first in the order that you want the panels to be in the consolidated tab. The panels will wrap from left to right and top to bottom based on that order.
+- The best way to get your panels sized and positioned is to order them in the plugin's settings first in the order that you want the panels to be in the consolidated tab. The panels will wrap from left to right and top to bottom based on that order.
 
-Once ordered and the page reloads then selct the panel you want to resize and then drag the edges until the panel is at your desired size. Each panel is positioned relative to the panel that precedes it, and as a result resizing a panel will cause the other panels to move, and potentially wrap if they extend past the containing tab.
+- Hold down the ctrl key and click anywhere on a panel (typically in blank space or on header) to activate it. Once activated you can let go of the ctrl key.
+  - Move panels by clicking and dragging the panel header.
+  - Resize panels by clicking and dragging the edges of the panel.
+  - Once finished click any panel to deactivate the currently active panel.
+
+- Each panel is positioned relative to the panel that precedes it in settings, and as a result resizing a panel will cause the other panels to move, and potentially wrap if they extend past the containing tab.
+
+- There are circumstances in which a panel may jump out of view while dragging/resizing panels. If this happens you can use the `Clear Positions` button in the plugin's settings to make all the panels realign to each other.
 
 ## Themeify
 

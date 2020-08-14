@@ -171,7 +171,7 @@ $(function() {
 				let position_top = (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id].top() + 'px') : 'auto';
 				let size_width = (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id].width() + 'px') : '100%';
 				let size_height = (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id].height() + 'px') : 'auto';
-				$('<div class="panel panel-default draggable resizable" id="' + tab.selector().replace('#','') + '_panel" style="width: ' + size_width + '\; height: ' + size_height + '\; left: ' + position_left + '\; top: ' + position_top + '\;"><div class="panel-heading"><span class="panel-mover">'+tab.name()+'</span><i class="icon icon-move panel-mover pull-right"></i></div><div class="panel-body"></div></div>').appendTo('#tab_plugin_consolidatedtabs > div.row-fluid');
+				$('<div class="panel panel-default draggable resizable" id="' + tab.selector().replace('#','') + '_panel" style="width: ' + size_width + '\; height: ' + size_height + '\; left: ' + position_left + '\; top: ' + position_top + '\;"><div class="panel-heading"><span class="panel-mover">'+tab.name()+'</span></div><div class="panel-body"></div></div>').appendTo('#tab_plugin_consolidatedtabs > div.row-fluid');
 				$(tab.selector()).appendTo(tab.selector()+'_panel > .panel-body').removeClass('tab-pane');
 				$('#' + tab.id()).remove();
 				if(self.settings.settings.plugins.consolidatedtabs.remove_title() && self.unassignedTabs().length === 0){
@@ -188,42 +188,73 @@ $(function() {
                 'use strict';
                 var selected = $([]), offset = {top: 0, left: 0};
                 $("#tab_plugin_consolidatedtabs > div").selectable({
+                    cancel: 'input,textarea,button,select,option,canvas,div#webcam_container',
                     selected: function( event, ui ) {
-                        $(ui.selected).resizable( "option", "disabled", false );
+                        if(event.ctrlKey) {
+                            $(ui.selected).resizable("option", "disabled", false);
+                            $(ui.selected).draggable("option", "disabled", false);
+                            $(ui.selected).addClass('panel-primary');
+                        }
+                        console.log('selected', ui.selected);
                     },
                     unselected: function( event, ui ) {
                         $(ui.unselected).resizable( "option", "disabled", true );
+                        $(ui.unselected).draggable( "option", "disabled", true );
+                        $(ui.unselected).removeClass('panel-primary');
+                        console.log('unselected', ui.unselected);
+                    },
+                    unselecting: function(event, ui){
+                        /*if( $(".ui-selected, .ui-unselecting").length > 1 || event.ctrlKey ) {*/
+                        if( $(ui.unselecting).is('.ui-selected') ) {
+                            return false;
+                            $(ui.unselecting).removeClass("ui-unselecting");
+                        }
+                        console.log('unselecting', ui.unselecting);
                     },
                     selecting: function(event, ui){
                         if( $(".ui-selected, .ui-selecting").length > 1) {
                             $(ui.selecting).removeClass("ui-selecting");
                         }
+                        console.log('selecting', ui.selecting);
                     }
                 });
                 $("#tab_plugin_consolidatedtabs > div > div.panel").draggable({
-                    handle : '.panel-heading i.panel-mover',
+                    handle : '.panel-heading',
                     containment : '#tab_plugin_consolidatedtabs > div',
                     snap : true,
-                    start: function () {
+                    disabled: true,
+                    start: function (event, ui) {
                         if (!$(this).is(".ui-selected")) {
                             $(".ui-selected").removeClass("ui-selected");
+                            $(".ui-selected").removeClass('panel-primary');
                         }
-                        selected = $(".ui-selected").each(function () {
+/*                        selected = $(".ui-selected").each(function () {
                             var element = $(this);
                             element.data("offset", element.offset());
                         });
-                        offset = $(this).offset();
+                        offset = $(this).offset();*/
                     },
-                    drag: function (event, ui) {
+/*                    drag: function (event, ui) {
                         var draggedTop = ui.position.top - offset.top, draggedLeft = ui.position.left - offset.left;
                         selected.not(this).each(function () {
                             var element = $(this), off = element.data("offset");
                             element.css({top: off.top + draggedTop, left: off.left + draggedLeft});
                         });
-                    },
+                    },*/
                     stop: function( event, ui ) {self.savePosition(ui)}
                 });
                 $('div.panel.resizable').resizable({handles: 's, w, e, sw, se', disabled: true, stop: function( event, ui ) {self.saveSize(ui)}});
+/*                $('#tab_plugin_consolidatedtabs > div > div.panel > div.panel-heading').mouseup(function(obj){
+                    console.log(obj);
+                    if(obj.ctrlKey){
+                        if($(obj.currentTarget).parent('div.panel').hasClass('ui-selected')){
+                            //$(obj.currentTarget).parent('div.panel').removeClass('ui-selected');
+                            $(obj.currentTarget).parent('div.panel').resizable("option", "disabled", true);
+                        } else{
+                            //$(obj.currentTarget).parent('div.panel').addClass('ui-selected');
+                            $(obj.currentTarget).parent('div.panel').resizable("option", "disabled", false);
+                        }
+                    }});*/
             });
 
             const selected = OctoPrint.coreui.selectedTab;
