@@ -31,7 +31,7 @@ or manually using this URL:
 
 - The best way to get your panels sized and positioned is to order them in the plugin's settings first in the order that you want the panels to be in the consolidated tab. The panels will wrap from left to right and top to bottom based on that order.
 
-- Hold down the ctrl key and click anywhere on a panel (typically in blank space or on header) to activate it. Once activated you can let go of the ctrl key.
+- Hold down the shift key on your keyboard and click anywhere on a panel (typically in blank space or on header) to activate it. Once activated you can let go of the shift key.
   - Move panels by clicking and dragging the panel header.
   - Resize panels by clicking and dragging the edges of the panel.
   - Once finished click any panel to deactivate the currently active panel.

@@ -188,20 +188,18 @@ $(function() {
                 'use strict';
                 var selected = $([]), offset = {top: 0, left: 0};
                 $("#tab_plugin_consolidatedtabs > div").selectable({
-                    cancel: 'input,textarea,button,select,option,canvas,div#webcam_container',
+                    cancel: 'input,textarea,button,select,option',
                     selected: function( event, ui ) {
-                        if(event.ctrlKey) {
+                        if(event.shiftKey) {
                             $(ui.selected).resizable("option", "disabled", false);
                             $(ui.selected).draggable("option", "disabled", false);
                             $(ui.selected).addClass('panel-primary');
                         }
-                        console.log('selected', ui.selected);
                     },
                     unselected: function( event, ui ) {
                         $(ui.unselected).resizable( "option", "disabled", true );
                         $(ui.unselected).draggable( "option", "disabled", true );
                         $(ui.unselected).removeClass('panel-primary');
-                        console.log('unselected', ui.unselected);
                     },
                     unselecting: function(event, ui){
                         /*if( $(".ui-selected, .ui-unselecting").length > 1 || event.ctrlKey ) {*/
@@ -209,13 +207,11 @@ $(function() {
                             return false;
                             $(ui.unselecting).removeClass("ui-unselecting");
                         }
-                        console.log('unselecting', ui.unselecting);
                     },
                     selecting: function(event, ui){
                         if( $(".ui-selected, .ui-selecting").length > 1) {
                             $(ui.selecting).removeClass("ui-selecting");
                         }
-                        console.log('selecting', ui.selecting);
                     }
                 });
                 $("#tab_plugin_consolidatedtabs > div > div.panel").draggable({
@@ -228,33 +224,10 @@ $(function() {
                             $(".ui-selected").removeClass("ui-selected");
                             $(".ui-selected").removeClass('panel-primary');
                         }
-/*                        selected = $(".ui-selected").each(function () {
-                            var element = $(this);
-                            element.data("offset", element.offset());
-                        });
-                        offset = $(this).offset();*/
                     },
-/*                    drag: function (event, ui) {
-                        var draggedTop = ui.position.top - offset.top, draggedLeft = ui.position.left - offset.left;
-                        selected.not(this).each(function () {
-                            var element = $(this), off = element.data("offset");
-                            element.css({top: off.top + draggedTop, left: off.left + draggedLeft});
-                        });
-                    },*/
                     stop: function( event, ui ) {self.savePosition(ui)}
                 });
                 $('div.panel.resizable').resizable({handles: 's, w, e, sw, se', disabled: true, stop: function( event, ui ) {self.saveSize(ui)}});
-/*                $('#tab_plugin_consolidatedtabs > div > div.panel > div.panel-heading').mouseup(function(obj){
-                    console.log(obj);
-                    if(obj.ctrlKey){
-                        if($(obj.currentTarget).parent('div.panel').hasClass('ui-selected')){
-                            //$(obj.currentTarget).parent('div.panel').removeClass('ui-selected');
-                            $(obj.currentTarget).parent('div.panel').resizable("option", "disabled", true);
-                        } else{
-                            //$(obj.currentTarget).parent('div.panel').addClass('ui-selected');
-                            $(obj.currentTarget).parent('div.panel').resizable("option", "disabled", false);
-                        }
-                    }});*/
             });
 
             const selected = OctoPrint.coreui.selectedTab;
