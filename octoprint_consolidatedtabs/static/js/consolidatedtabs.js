@@ -184,7 +184,7 @@ $(function() {
 			//$('div.panel.resizable').resizable({handles: 's, w, e', containment: '#tabs_content', stop: function( event, ui ) {self.saveSize(ui)}});
 			//$('div#tabs_content').resizable({handles: 's'});
 			//$('div.panel.draggable .panel-heading').on('mousedown', self.mouseDownCallback);
-            $("#tab_plugin_consolidatedtabs > div").selectable({
+ /*           $("#tab_plugin_consolidatedtabs > div").selectable({
                 filter: '.panel',
                 cancel: 'input,textarea,button,select,option',
                 selected: function( event, ui ) {
@@ -200,7 +200,7 @@ $(function() {
                     $(ui.unselected).removeClass('panel-primary');
                 },
                 unselecting: function(event, ui){
-                    /*if( $(".ui-selected, .ui-unselecting").length > 1 || event.ctrlKey ) {*/
+                    /!*if( $(".ui-selected, .ui-unselecting").length > 1 || event.ctrlKey ) {*!/
                     if( $(ui.unselecting).is('.ui-selected') ) {
                         return false;
                         $(ui.unselecting).removeClass("ui-unselecting");
@@ -227,11 +227,7 @@ $(function() {
                 },
                 stop: function( event, ui ) {self.savePosition(ui)}
             });
-            $('div.panel.resizable').resizable({handles: 's, w, e, sw, se', disabled: true, stop: function( event, ui ) {self.saveSize(ui)}});
-            $('div.panel .dropdown-toggle').on('show.bs.dropdown', function(event){
-                //$(event.currentTarget).parents('div.panel').addClass('ui-selected');
-                console.log(event);
-            });
+            $('div.panel.resizable').resizable({handles: 's, w, e, sw, se', disabled: true, stop: function( event, ui ) {self.saveSize(ui)}});*/
 
             const selected = OctoPrint.coreui.selectedTab;
             if(self.webcamtab) {
@@ -308,6 +304,38 @@ $(function() {
                         self.resetting_positions(false);
                     }
 				});
+        }
+
+        self.afterAddWidget = function(items) {
+            if (!self.grid ) {
+                self.grid = GridStack.init({auto: false, animate: true});
+                self.grid.on('change', function(event, items) {
+                    let serializedData = [];
+                    console.log(self.settings.settings.plugins.consolidatedtabs.gridstack());
+                    self.grid.engine.nodes.forEach(function(node, idx) {
+                        let node_observable = self.settings.settings.plugins.consolidatedtabs.gridstack()[idx];
+                        node_observable.id(node.id);
+                        node_observable.x(node.x);
+                        node_observable.y(node.y);
+                        node_observable.width(node.width);
+                        node_observable.height(node.height);
+                        serializedData.push(node_observable);
+                    });
+                    self.settings.settings.plugins.consolidatedtabs.gridstack(serializedData);
+                });
+            }
+
+            var item = items.find(function (i) { return i.nodeType == 1 });
+            self.grid.addWidget(item);
+            ko.utils.domNodeDisposal.addDisposeCallback(item, function () {
+                self.grid.removeWidget(item);
+            });
+        }
+
+        self.addGridstackWidget = function(data) {
+		    var newWidget = {};
+		    $.extend(newWidget, data, {x: 0, y: 0, width: 4, height: 3, auto_position: true});
+            self.settings.settings.plugins.consolidatedtabs.gridstack.push(newWidget);
         }
 
         self.resetSizes = function() {

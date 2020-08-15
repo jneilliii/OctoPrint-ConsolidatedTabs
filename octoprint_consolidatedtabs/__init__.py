@@ -19,7 +19,8 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 			resize_navbar=True,
 			panel_positions={},
 			panel_sizes={},
-			remove_title=False
+			remove_title=False,
+			gridstack=[]
 		)
 
 	##-- Template mixin
@@ -32,7 +33,8 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 
 		return [
 			dict(type="tab", name=tab_name, custom_bindings=True),
-			dict(type="settings", custom_bindings=True)
+			dict(type="settings", custom_bindings=True),
+			dict(type="general", custom_bindings=True)
 		]
 
 	##~~ AssetPlugin mixin
@@ -40,7 +42,7 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 	def get_assets(self):
 		return dict(
 			js=["js/jquery-ui.min.js", "js/jquery.ui.resizable.snap.ext.js", "js/knockout-sortable.js", "js/consolidatedtabs.js"],
-			css=["css/consolidatedtabs.css"]
+			css=["css/gridstack.min.css", "css/consolidatedtabs.css"]
 		)
 
 	##~~ SimpleApiPlugin mixin
