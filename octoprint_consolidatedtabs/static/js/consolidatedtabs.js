@@ -216,6 +216,8 @@ $(function() {
                 handle : '.panel-heading',
                 containment : '#tab_plugin_consolidatedtabs > div',
                 snap : true,
+                stack: 'div.panel',
+                zIndex: 100,
                 disabled: true,
                 start: function (event, ui) {
                     if (!$(this).is(".ui-selected")) {

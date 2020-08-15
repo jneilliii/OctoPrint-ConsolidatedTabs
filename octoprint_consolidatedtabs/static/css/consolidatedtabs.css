@@ -1,6 +1,8 @@
 div#tab_plugin_consolidatedtabs > div.row-fluid {
-	display: inline-flex;
-	flex-flow: row wrap;
+	display: inline-block;
+	/*flex-flow: row wrap;*/
+	/*clear: both;*/
+	/*border: 1px solid red;*/
 }
 
 div#tabs_content {
