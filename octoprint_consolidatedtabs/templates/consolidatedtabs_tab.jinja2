@@ -1,14 +1,7 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@1.2.0/dist/gridstack.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/gridstack@1.2.0/dist/gridstack.all.js"> </script>
-<div class="container-fluid">
-    <div class="grid-stack" data-bind="foreach: {data: settings.settings.plugins.consolidatedtabs.gridstack, afterRender: afterAddWidget}">
-        <div class="grid-stack-item" data-bind="attr: {'data-gs-x': $data.x, 'data-gs-y': $data.y, 'data-gs-width': $data.width, 'data-gs-height': $data.height, 'data-gs-auto-position': $data.auto_position, 'data-gs-id': $data.id}">
-            <div class="grid-stack-item-content panel" data-bind="attr: {'id': ($data.id().replace('#','') + '_panel')}">
-                <div class="panel-heading">
-                    <span data-bind="text: name"></span>
-                    <span class="btn btn-mini btn-danger icon-trash" style="display: inline-block; float: right" data-bind="click: $root.removeGridstackWidget"></span>
-                </div>
-                <div class="panel-body"> </div>
-            </div>
-        </div>
+<div class="row-fluid" style="min-height: 600px;">
+    <div class="container-fluid">
+        <div class="grid-stack"></div>
     </div>
 </div>

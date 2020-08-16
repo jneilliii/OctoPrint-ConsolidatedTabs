@@ -46,6 +46,8 @@ $(function() {
 								return results;
 							});
 
+		self.grid = null;
+
 		self.onStartup = function(){
 		    $(window).on('resize', self.resize_container);
         }
@@ -171,8 +173,10 @@ $(function() {
 				let position_top = (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id].top() + 'px') : '0px';
 				let size_width = (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id].width() + 'px') : '590px';
 				let size_height = (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id].height() + 'px') : 'auto';
-				$('<div class="panel panel-default draggable resizable" id="' + tab.selector().replace('#','') + '_panel" style="width: ' + size_width + '\; height: ' + size_height + '\; left: ' + position_left + '\; top: ' + position_top + '\;"><div class="panel-heading"><span class="panel-mover">'+tab.name()+'</span></div><div class="panel-body"></div></div>').appendTo('#tab_plugin_consolidatedtabs > div.row-fluid');
-				$(tab.selector()).appendTo(tab.selector()+'_panel > .panel-body').removeClass('tab-pane');
+				console.log(tab.name());
+				self.grid.addWidget('<div><div class="grid-stack-item-content">'+ tab.name() +'</div></div>', {width: 2});
+				//$('<div class="panel panel-default draggable resizable" id="' + tab.selector().replace('#','') + '_panel" style="width: ' + size_width + '\; height: ' + size_height + '\; left: ' + position_left + '\; top: ' + position_top + '\;"><div class="panel-heading"><span class="panel-mover">'+tab.name()+'</span></div><div class="panel-body"></div></div>').appendTo('#tab_plugin_consolidatedtabs > div.row-fluid');
+				//$(tab.selector()).appendTo(tab.selector()+'_panel > .panel-body').removeClass('tab-pane');
 				$('#' + tab.id()).remove();
 				if(self.settings.settings.plugins.consolidatedtabs.remove_title() && self.unassignedTabs().length === 0){
 				    $('#tab_plugin_consolidatedtabs_link').css({border: '0px', width: '0px', overflow: 'hidden'});
@@ -308,8 +312,8 @@ $(function() {
 
         self.afterAddWidget = function(items) {
             if (!self.grid ) {
-                self.grid = GridStack.init({auto: false, animate: true});
-                self.grid.on('change', function(event, items) {
+                self.grid = GridStack.init({auto: false});
+/*                self.grid.on('change', function(event, items) {
                     let serializedData = [];
                     console.log(self.settings.settings.plugins.consolidatedtabs.gridstack());
                     self.grid.engine.nodes.forEach(function(node, idx) {
@@ -322,7 +326,7 @@ $(function() {
                         serializedData.push(node_observable);
                     });
                     self.settings.settings.plugins.consolidatedtabs.gridstack(serializedData);
-                });
+                });*/
             }
 
             var item = items.find(function (i) { return i.nodeType == 1 });
