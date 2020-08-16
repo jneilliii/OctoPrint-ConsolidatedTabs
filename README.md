@@ -52,6 +52,7 @@ If using Themeify you will want to add extra settings to your Advanced options. 
 ## Most Recent Release
 **[0.0.8](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.0.8)** (08/16/2020)
 
+* change width logic with new option `Use Full Width of Browser`
 * switch to panel activation using shift+click
 * add containment
 * save size and position on panel deactivation, reducing save calls
