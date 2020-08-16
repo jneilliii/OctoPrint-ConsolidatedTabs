@@ -3,10 +3,15 @@ div#tab_plugin_consolidatedtabs > div.row-fluid {
 	/*flex-flow: row wrap;*/
 	/*clear: both;*/
 	/*border: 1px solid red;*/
+	position: relative;
 }
 
 div#tabs_content {
 	height: 100%;
+}
+
+#settings_plugin_consolidatedtabs div.row-fluid [class*="span"] {
+	margin: 2px;
 }
 
 .panel {

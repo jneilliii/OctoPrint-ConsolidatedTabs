@@ -23,28 +23,37 @@ $(function() {
 		self.resetting_sizes = ko.observable(false);
 		self.settings_ui_changed = ko.observable(false);
 		self.required_callbacks = {onTabChange: {}, onAfterTabChange: {}};
+
 		self.assignedTabs = ko.pureComputed(function(){
             return ko.utils.arrayMap(self.settings.settings.plugins.consolidatedtabs.tab_order(), function (tab) {
                                     return tab.selector();
                                 });
-							});
-		self.assignedTabsByID = ko.pureComputed(function(){
+                            });
+        self.assignedTabsByID = ko.pureComputed(function(){
             return ko.utils.arrayMap(self.settings.settings.plugins.consolidatedtabs.tab_order(), function (tab) {
                                     return tab.id();
                                 });
-							});
-		self.unassignedTabs = ko.pureComputed(function() {
-								//find out the categories that are missing from uniqueNames
+                            });
+        self.unassignedTabs = ko.pureComputed(function() {
+            //find out the categories that are missing from uniqueNames
             const differences = ko.utils.compareArrays(self.availableTabs().sort(), self.assignedTabs().sort());
             //return a flat list of differences
             const results = [];
             ko.utils.arrayForEach(differences, function(difference) {
-									if(difference.status === "deleted") {
-										results.push(difference.value);
-									}
-								});
-								return results;
-							});
+                                    if(difference.status === "deleted") {
+                                        results.push(difference.value);
+                                    }
+                                });
+                                return results;
+                            });
+        self.hasTemp = ko.pureComputed(function(){
+            return (self.assignedTabsByID().indexOf('temp_link') > -1);
+        });
+        self.hasWebcam = ko.pureComputed(function(){
+            return (self.assignedTabsByID().indexOf('control_link') > -1 || self.assignedTabsByID().indexOf('tab_plugin_webcamtab_link') > -1);
+        });
+        self.panelPosition = {panel_sizes: {}, panel_positions: {}};
+        self.saveNeeded = ko.observable(false);
 
 		self.onStartup = function(){
 		    $(window).on('resize', self.resize_container);
@@ -59,13 +68,13 @@ $(function() {
             }
 
 			// navbar adjustments
-			if(self.settings.settings.plugins.consolidatedtabs.resize_navbar()){
+			if(self.settings.settings.plugins.consolidatedtabs.resize_navbar()) {
 				$('#navbar > div.navbar-inner > div.container').css({'width':'100%'});
 				$('#navbar > div.navbar-inner > div.row-fluid > div.nav-collapse').css({'padding-right':'20px'});
 			}
         }
 
-		self.onAfterBinding = function(){
+		self.onAfterBinding = function() {
 			self.active_settings = ko.toJSON(self.settings.settings.plugins.consolidatedtabs.tab_order);
 			self.remove_title = self.settings.settings.plugins.consolidatedtabs.remove_title();
 			self.tab_width = self.settings.settings.plugins.consolidatedtabs.width();
@@ -118,23 +127,14 @@ $(function() {
 		}
 
 		self.savePosition = function(ui){
-            $('.ui-resizable-handle, i.ui-draggable-handle, .panel-heading, body').css({'cursor':'wait'});
-            const settings_to_save = {panel_positions: {}};
-            settings_to_save.panel_positions[ui.helper.attr('id')] = ui.position;
-			OctoPrint.settings.savePluginSettings('consolidatedtabs',settings_to_save).done(function(){
-			    self.onEventSettingsUpdated();
-                $('.ui-resizable-handle, i.ui-draggable-handle, .panel-heading, body').css({'cursor':''});
-			});
+            self.panelPosition.panel_positions[ui.helper.attr('id')] = ui.position;
+            self.saveNeeded(true);
 		}
 
 		self.saveSize = function(ui){
-            $('.ui-resizable-handle, i.ui-draggable-handle, .panel-heading, body').css({'cursor':'wait'});
-            const settings_to_save = {panel_sizes: {}};
-            settings_to_save.panel_sizes[ui.helper.attr('id')] = ui.size;
-			OctoPrint.settings.savePluginSettings('consolidatedtabs',settings_to_save).done(function(){
-			    self.onEventSettingsUpdated();
-                $('.ui-resizable-handle, i.ui-draggable-handle, .panel-heading, body').css({'cursor':''});
-			});
+            self.panelPosition.panel_sizes[ui.helper.attr('id')] = ui.size;
+            self.panelPosition.panel_positions[ui.helper.attr('id')] = ui.position;
+            self.saveNeeded(true);
 		}
 
 		self.onAllBound = function(allViewModels) {
@@ -180,15 +180,12 @@ $(function() {
 				    $('div#tabs_content').css({'padding-top': '0px', 'padding-left': '0px', 'padding-right': '5px', border: '0px', 'margin-top': '-37px'});
                 }
 			});
-			//$('div.panel.draggable').draggable({scroll: true, snap: '.panel', snapMode: 'outer', snapTolerance: 5, handle: '.panel-heading', containment: '#tabs_content', /*stack: 'div.panel',*/ zIndex: 100, stop: function( event, ui ) {self.savePosition(ui)}});
-			//$('div.panel.resizable').resizable({handles: 's, w, e', containment: '#tabs_content', stop: function( event, ui ) {self.saveSize(ui)}});
-			//$('div#tabs_content').resizable({handles: 's'});
-			//$('div.panel.draggable .panel-heading').on('mousedown', self.mouseDownCallback);
             $("#tab_plugin_consolidatedtabs > div").selectable({
                 filter: '.panel',
                 cancel: 'input,textarea,button,select,option',
                 selected: function( event, ui ) {
                     if(event.shiftKey) {
+                        self.panelPosition = {panel_sizes: {}, panel_positions: {}};
                         $(ui.selected).resizable("option", "disabled", false);
                         $(ui.selected).draggable("option", "disabled", false);
                         $(ui.selected).addClass('panel-primary');
@@ -198,6 +195,14 @@ $(function() {
                     $(ui.unselected).resizable( "option", "disabled", true );
                     $(ui.unselected).draggable( "option", "disabled", true );
                     $(ui.unselected).removeClass('panel-primary');
+                    if(self.saveNeeded()) {
+                        $('.ui-resizable-handle, i.ui-draggable-handle, .panel-heading, body').css({'cursor': 'wait'});
+                        OctoPrint.settings.savePluginSettings('consolidatedtabs', self.panelPosition).done(function () {
+                            self.onEventSettingsUpdated();
+                            self.saveNeeded(false);
+                            $('.ui-resizable-handle, i.ui-draggable-handle, .panel-heading, body').css({'cursor': ''});
+                        });
+                    }
                 },
                 unselecting: function(event, ui){
                     /*if( $(".ui-selected, .ui-unselecting").length > 1 || event.ctrlKey ) {*/
@@ -221,50 +226,43 @@ $(function() {
                 disabled: true,
                 start: function (event, ui) {
                     if (!$(this).is(".ui-selected")) {
-                        $(".ui-selected").removeClass("ui-selected");
-                        $(".ui-selected").removeClass('panel-primary');
+                        $(".ui-selected").removeClass("ui-selected panel-primary");
                     }
                 },
                 stop: function( event, ui ) {self.savePosition(ui)}
             });
             $('div.panel.resizable').resizable({handles: 's, w, e, sw, se', disabled: true, stop: function( event, ui ) {self.saveSize(ui)}});
-            $('div.panel .dropdown-toggle').on('show.bs.dropdown', function(event){
-                //$(event.currentTarget).parents('div.panel').addClass('ui-selected');
-                console.log(event);
-            });
 
-            const selected = OctoPrint.coreui.selectedTab;
-            if(self.webcamtab) {
-				OctoPrint.coreui.selectedTab = "#tab_plugin_webcamtab";
-			} else {
-				OctoPrint.coreui.selectedTab = "#control";
-			}
-			self.controlViewModel.onAllBound(allViewModels);
+            let selected = OctoPrint.coreui.selectedTab;
+            if(self.hasWebcam()) {
+                if (self.webcamtab) {
+                    OctoPrint.coreui.selectedTab = "#tab_plugin_webcamtab";
+                } else {
+                    OctoPrint.coreui.selectedTab = "#control";
+                }
+                self.controlViewModel.onAllBound(allViewModels);
+            }
+
 			OctoPrint.coreui.selectedTab = selected;
-			if(selected === "#tab_plugin_consolidatedtabs" || selected === "#temp") {
+			if(selected === "#tab_plugin_consolidatedtabs" && self.hasTemp()) {
 				self.temperatureViewModel._initializePlot();
 			}
 		};
 
-		self.controlViewModel.onBrowserTabVisibilityChange = function(status) {
-			if(status) {
-                const selected = OctoPrint.coreui.selectedTab;
-                if(self.webcamtab) {
-					OctoPrint.coreui.selectedTab = "#tab_plugin_webcamtab";
-				} else {
-					OctoPrint.coreui.selectedTab = "#control";
-				}
-				self.controlViewModel._enableWebcam();
-				OctoPrint.coreui.selectedTab = selected;
-			} else {
-				self.controlViewModel._disableWebcam();
-			}
-		};
-
-/*		self.onStartupComplete = function(){
-            self.onTabChange("#tab_plugin_consolidatedtabs", null);
-            self.onAfterTabChange("#tab_plugin_consolidatedtabs", null);
-        }*/
+        self.controlViewModel.onBrowserTabVisibilityChange = function (status) {
+            if (status && self.hasWebcam()) {
+                let selected = OctoPrint.coreui.selectedTab;
+                if (self.webcamtab) {
+                    OctoPrint.coreui.selectedTab = "#tab_plugin_webcamtab";
+                } else {
+                    OctoPrint.coreui.selectedTab = "#control";
+                }
+                self.controlViewModel._enableWebcam();
+                OctoPrint.coreui.selectedTab = selected;
+            } else {
+                self.controlViewModel._disableWebcam();
+            }
+        };
 
 		// fix control tab
 		self.onTabChange = function(current, previous) {
@@ -280,18 +278,20 @@ $(function() {
 		self.onAfterTabChange = function(current, previous) {
 			if(current === "#tab_plugin_consolidatedtabs"){
 				for (let callback in self.required_callbacks.onAfterTabChange){
+				    OctoPrint.coreui.selectedTab = '#'+callback;
 					self.required_callbacks.onAfterTabChange[callback].isActive = true;
 					self.required_callbacks.onAfterTabChange[callback].onAfterTabChange('#'+callback, previous);
 				}
 			}
-			if((current === "#tab_plugin_consolidatedtabs") || (current === "#temp")) {
+			OctoPrint.coreui.selectedTab = current;
+/*			if(current === "#tab_plugin_consolidatedtabs" && self.hasTemp()) {
 				if(!self.temperatureViewModel.plot) {
 					self.temperatureViewModel._initializePlot();
 				} else {
 					self.temperatureViewModel.updatePlot();
 				}
 				self.temperatureViewModel.onAfterTabChange("#temp", previous);
-			}
+			}*/
 		}
 
 		self.resetPositions = function() {
@@ -331,7 +331,6 @@ $(function() {
 			self.availableTabs.remove(data);
 		}
 		self.removeTab = function(data) {
-			console.log(data);
 			self.availableTabs.push(data);
 			self.settings.settings.plugins.consolidatedtabs.tab_order.remove(data);
 		}
