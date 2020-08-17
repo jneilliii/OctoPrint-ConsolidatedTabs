@@ -1,98 +1,142 @@
-(function() {
-'use strict';
+ko.bindingHandlers.gridStack = {
+	helpers: {
+		cloneNodes: function (nodesArray, shouldCleanNodes) {
+			for (var i = 0, j = nodesArray.length, newNodesArray = []; i < j; i++) {
+				var clonedNode = nodesArray[i].cloneNode(true);
+				newNodesArray.push(shouldCleanNodes ? ko.cleanNode(clonedNode) : clonedNode);
+			}
+			return newNodesArray;
+		}
+	},
+	init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+		var $element = $(element);
+		var gridItems = [];
+		var fromObs = false;
+		var template = ko.bindingHandlers.gridStack.helpers.cloneNodes(element.getElementsByClassName('grid-stack-item'), true);
+		ko.virtualElements.emptyNode(element);
 
-ko.components.register('gridstack', {
-    viewModel: {
-        createViewModel: function(controller, componentInfo) {
-            var ViewModel = function(controller, componentInfo) {
-                var grid = null,
-                    gridstack = $('.grid-stack'),
-                    gridstackWidth = gridstack.width(),
-                    widgetHeight = (gridstackWidth / 12) - 5;
+		var timeout;
+		var grid = $element.gridstack(ko.utils.extend(ko.unwrap(valueAccessor().settings) || {}, {
+			auto: true
+		})).data('gridstack');
 
-                this.widgets = controller.widgets;
+		$element.on('change', function (eve, items) {
+			if (!fromObs) {
+				if (timeout) {
+					clearTimeout(timeout);
+				}
+				timeout = setTimeout(function () {
+					for (var i = 0; i < gridItems.length; i++) {
+						var item = gridItems[i];
+						var from = {
+							x: ko.unwrap(item.item.x),
+							y: ko.unwrap(item.item.y),
+							width: ko.unwrap(item.item.width),
+							height: ko.unwrap(item.item.height)
+						};
+						var to = {
+							x: parseInt(item.element.getAttribute("data-gs-x")),
+							y: parseInt(item.element.getAttribute("data-gs-y")),
+							width: parseInt(item.element.getAttribute("data-gs-width")),
+							height: parseInt(item.element.getAttribute("data-gs-height"))
+						};
 
-                this.afterAddWidget = function(items) {
-                    _.each(items, function(item) {
-                        item = $(item);
+						if (from.x != to.x )
+						 {   if(ko.isWritableObservable(item.item.x)) {
+								item.item.x(to.x);
+							}else if(!ko.isObservable()){
+								item.item.x = to.x;
+							}
+						}
 
-                        if (item.data('_gridstack_node') || item[0].nodeType !== 1) {
-                            return;
-                        }
+						if (from.y != to.y) {
+							if (ko.isWritableObservable(item.item.y)) {
+								item.item.y(to.y);
+							} else if (!ko.isObservable()) {
+								item.item.y = to.y;
+							}
+						}
 
-                        if (grid == null) {
-                            grid = $(componentInfo.element).find('.grid-stack').gridstack({
-                                auto: false,
-                                animate: true,
-                                cell_height: widgetHeight,
-                                handle: '.editing-options .handle',
-                                vertical_margin: 10
-                            }).data('gridstack');
-                        }
+						if (from.width != to.width) {
+							if (ko.isWritableObservable(item.item.width)) {
+								item.item.width(to.width);
+							} else if (!ko.isObservable()) {
+								item.item.width = to.width;
+							}
+						}
 
-                        grid.add_widget(item);
-                        ko.utils.domNodeDisposal.addDisposeCallback(item[0], function() {
-                            grid.remove_widget(item);
-                        });
-                    }, this);
-                };
+						if (from.height != to.height) {
+							if (ko.isWritableObservable(item.item.height)) {
+								item.item.height(to.height);
+							} else if (!ko.isObservable()) {
+								item.item.height = to.height;
+							}
+						}
+					}
+				}, 10);
 
-                $(componentInfo.element).find('.grid-stack').on('resizestop', function(event, ui) {
-                    setTimeout(function() { // necessary as resizestop fires slightly too early
-                        _.each(Highcharts.charts, function(chart) {
-                            if (chart) {
-                                chart.reflow();
-                            }
-                        });
-                    }, 10);
+			}
+		});
 
-                    // TODO: update viewmodel rect values after resizestop
-                });
+		ko.computed({
+			read: function () {
+				fromObs = true;
+				var widgets = ko.unwrap(valueAccessor().widgets);
+				var newGridItems = [];
 
-                $(componentInfo.element).find('.grid-stack').on('dragstop', function(event, ui) {
-                    // TODO: update viewmodel rect values after dragstop
-                });
-            };
+				for (var i = 0; i < gridItems.length; i++) {
+					var item = ko.utils.arrayFirst(widgets, function (w) { return w == gridItems[i].item; });
+					if (item == null) {
+						grid.removeWidget(gridItems[i].element);
+						ko.cleanNode(gridItems[i].element);
+					} else {
+						newGridItems.push(gridItems[i]);
+					}
+				}
 
-            return new ViewModel(controller, componentInfo);
-        }
-    },
-    template:
-    [
-        '<div class="grid-stack" data-bind="foreach: {data: widgets, afterRender: afterAddWidget}">' +
-            '<div class="grid-stack-item" data-bind="attr: { \'data-gs-x\': x, \'data-gs-y\': y, \'data-gs-width\': width, \'data-gs-height\': height, \'data-gs-min-height\': rect.minHeight, \'data-gs-max-height\': rect.maxHeight, \'data-gs-min-width\': rect.minWidth, \'data-gs-max-width\': rect.maxWidth }">' +
-                '<div class="grid-stack-item-content">' +
-                    '<h3>' +
-                        '<span data-bind="text: title"></span>' +
-                        '<span class="link float--right" data-bind="click: $root.removeTile">x</span>' +
-                    '</h3>' +
-                    '<img src="Content/images/loading.gif" data-bind="visible: isLoading()" class="loading" />' +
-                    '<!-- ko if: editMode -->' +
-                    '<div class="tile-options">' +
-                        '<div class="row">' +
-                            '<label>Title <input type="text" class="text-input" data-bind="value: title" /></label>' +
-                        '</div>' +
-                        '<div class="row">' +
-                            '<label>View <select data-bind="options: $root.views, optionsText: \'ViewName\', optionsCaption: \'Choose a view\', value: selectedView" class="text-input"></select>' +
-                            '</label>' +
-                        '</div>' +
-                        '<div class="row">' +
-                            '<label>Table/Chart <select class="text-input" data-bind="options: (selectedView() || {}).Charts, optionsText: \'ChartName\', value: selectedChart"></select>' +
-                            '</label>' +
-                        '</div>' +
-                        '<div class="row">' +
-                            '<button type="button" class="btn btn--small" data-bind="click: $root.saveTile">Save Tile</button> or <span class="link" data-bind="click: $root.cancelTile">Cancel</span>' +
-                        '</div>' +
-                    '</div>' +
-                    '<!-- /ko -->' +
-                    '<div data-bind="chart: chart" class="fill"></div>' +
-                    '<div class="editing-options">' +
-                        '<span class="handle"><i class="icon icon-drag"></i> Drag to Move </span>' +
-                        '<span data-bind="click: $root.editTile, visible: !editMode()" class="link">Edit </span>' +
-                    '</div>' +
-                '</div>' +
-            '</div>' +
-        '</div>'
-    ].join('\n')
-});
-})();
+				for (var i = 0; i < widgets.length; i++) {
+					var item = ko.utils.arrayFirst(gridItems, function (w) { return w.item == widgets[i]; });
+					if (item == null) {
+						var innerBindingContext = bindingContext['createChildContext'](widgets[i]);
+						var itemElement = ko.bindingHandlers.gridStack.helpers.cloneNodes(template)[0];
+						grid.addWidget(itemElement, ko.unwrap(widgets[i].x), ko.unwrap(widgets[i].y), ko.unwrap(widgets[i].width), ko.unwrap(widgets[i].height), true);
+						ko.applyBindings(innerBindingContext, itemElement)
+						newGridItems.push({ item: widgets[i], element: itemElement });
+					} else {
+						var to = {
+							x: ko.unwrap(widgets[i].x),
+							y: ko.unwrap(widgets[i].y),
+							width: ko.unwrap(widgets[i].width),
+							height: ko.unwrap(widgets[i].height)
+						};
+						var from = {
+							x: parseInt(item.element.getAttribute("data-gs-x")),
+							y: parseInt(item.element.getAttribute("data-gs-y")),
+							width: parseInt(item.element.getAttribute("data-gs-width")),
+							height: parseInt(item.element.getAttribute("data-gs-height"))
+						};
+
+						if (from.x != to.x || from.y != to.y) {
+							grid.move(item.element, to.x, to.y);
+						}
+
+						if (from.width != to.width || from.height != to.height) {
+							grid.resize(item.element, to.width, to.height);
+						}
+					}
+				}
+				gridItems = newGridItems;
+
+				fromObs = false;
+			},
+			disposeWhenNodeIsRemoved: element
+		}).extend({ deferred:true });
+
+
+		ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+			gridStack.destroy();
+		});
+
+		return { 'controlsDescendantBindings': true };
+	}
+};

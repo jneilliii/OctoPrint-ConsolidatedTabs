@@ -48,9 +48,9 @@ $(function() {
 
 		self.grid = null;
 
-		self.onStartup = function(){
+/*		self.onStartup = function(){
 		    $(window).on('resize', self.resize_container);
-        }
+        }*/
 
         self.resize_container = function(){
 		    // OctoPrint container adjustments
@@ -168,15 +168,41 @@ $(function() {
 						self.required_callbacks.onAfterTabChange[tab.selector().replace('#','')] = self.tab_callbacks()[tab.selector().replace('#','')];
 					}
 				}
+				if(!self.grid) {
+				    self.grid = GridStack.init({
+                        verticalMargin: '10px',
+                        animate: true,
+                        float: true,
+                        auto: false,
+                        draggable: {handle: '.panel-heading, .accordion-heading', scroll: true},
+                        resizable: {handles: 's, w, e, sw, se', scroll: true}
+                    });
+                    self.grid.on('change', function(event, items) {
+                        let serializedData = [];
+                        self.grid.engine.nodes.forEach(function(node, idx) {
+                            let node_observable = {
+                                id : node.id,
+                                x : node.x,
+                                y : node.y,
+                                width : node.width,
+                                height : node.height,
+                                autoPosition: node.autoPosition ? true : false
+                            }
+                            serializedData.push(node_observable);
+                        });
+                        self.settings.settings.plugins.consolidatedtabs.gridstack(serializedData);
+                    });
+                }
 				let tab_id = tab.selector().replace('#','') + '_panel';
 				let position_left = (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id].left() + 'px') : '0px';
 				let position_top = (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id].top() + 'px') : '0px';
 				let size_width = (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id].width() + 'px') : '590px';
 				let size_height = (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id].height() + 'px') : 'auto';
-				console.log(tab.name());
-				self.grid.addWidget('<div><div class="grid-stack-item-content">'+ tab.name() +'</div></div>', {width: 2});
+                let panelSettings = ko.utils.arrayFirst(self.settings.settings.plugins.consolidatedtabs.gridstack(), function(item){return item.id() === tab.id()});
+
+				self.grid.addWidget('<div><div class="grid-stack-item-content panel" id="' + tab.selector().replace('#','') + '_panel"><div class="panel-heading">'+ tab.name() +'</div><div class="panel-body"></div></div></div>', panelSettings ? ko.toJS(panelSettings) : {id: tab.id(), width: 4, height: 6, autoPosition: true});
 				//$('<div class="panel panel-default draggable resizable" id="' + tab.selector().replace('#','') + '_panel" style="width: ' + size_width + '\; height: ' + size_height + '\; left: ' + position_left + '\; top: ' + position_top + '\;"><div class="panel-heading"><span class="panel-mover">'+tab.name()+'</span></div><div class="panel-body"></div></div>').appendTo('#tab_plugin_consolidatedtabs > div.row-fluid');
-				//$(tab.selector()).appendTo(tab.selector()+'_panel > .panel-body').removeClass('tab-pane');
+				$(tab.selector()).appendTo(tab.selector()+'_panel > .panel-body').removeClass('tab-pane');
 				$('#' + tab.id()).remove();
 				if(self.settings.settings.plugins.consolidatedtabs.remove_title() && self.unassignedTabs().length === 0){
 				    $('#tab_plugin_consolidatedtabs_link').css({border: '0px', width: '0px', overflow: 'hidden'});
@@ -262,8 +288,9 @@ $(function() {
 		};
 
 /*		self.onStartupComplete = function(){
-            self.onTabChange("#tab_plugin_consolidatedtabs", null);
-            self.onAfterTabChange("#tab_plugin_consolidatedtabs", null);
+            ko.utils.arrayForEach(self.settings.settings.plugins.consolidatedtabs.tab_order(), function(tab) {
+                console.log(tab.name());
+            });
         }*/
 
 		// fix control tab

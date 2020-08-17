@@ -42,8 +42,7 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 	def get_assets(self):
 		return dict(
 			js=["js/jquery-ui.min.js",
-				"js/jquery.ui.resizable.snap.ext.js",
-				"js/knockout-sortable.js"
+				"js/knockout-sortable.js",
 				"js/consolidatedtabs.js"],
 			css=["css/consolidatedtabs.css"]
 		)
