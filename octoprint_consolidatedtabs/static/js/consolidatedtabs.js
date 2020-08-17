@@ -157,6 +157,31 @@ $(function() {
 				$('#tab_plugin_consolidatedtabs_link, #tab_plugin_consolidatedtabs').remove();
 				return;
 			}
+
+			//initialize GridStack
+            if(!self.grid) {
+                self.grid = GridStack.init({
+                    verticalMargin: '10px',
+                    float: true,
+                    auto: false
+                });
+                self.grid.on('change', function(event, items) {
+                    let serializedData = [];
+                    self.grid.engine.nodes.forEach(function(node, idx) {
+                        let node_observable = {
+                            id : node.id,
+                            x : node.x,
+                            y : node.y,
+                            width : node.width,
+                            height : node.height,
+                            autoPosition: node.autoPosition ? true : false
+                        }
+                        serializedData.push(node_observable);
+                    });
+                    self.settings.settings.plugins.consolidatedtabs.gridstack(serializedData);
+                });
+            }
+
 			// move original tab content and remove tab links.
 			ko.utils.arrayForEach(self.settings.settings.plugins.consolidatedtabs.tab_order(), function(tab) {
 				self.tabs.push(tab);
@@ -168,31 +193,7 @@ $(function() {
 						self.required_callbacks.onAfterTabChange[tab.selector().replace('#','')] = self.tab_callbacks()[tab.selector().replace('#','')];
 					}
 				}
-				if(!self.grid) {
-				    self.grid = GridStack.init({
-                        verticalMargin: '10px',
-                        animate: true,
-                        float: true,
-                        auto: false,
-                        draggable: {handle: '.panel-heading, .accordion-heading', scroll: true},
-                        resizable: {handles: 's, w, e, sw, se', scroll: true}
-                    });
-                    self.grid.on('change', function(event, items) {
-                        let serializedData = [];
-                        self.grid.engine.nodes.forEach(function(node, idx) {
-                            let node_observable = {
-                                id : node.id,
-                                x : node.x,
-                                y : node.y,
-                                width : node.width,
-                                height : node.height,
-                                autoPosition: node.autoPosition ? true : false
-                            }
-                            serializedData.push(node_observable);
-                        });
-                        self.settings.settings.plugins.consolidatedtabs.gridstack(serializedData);
-                    });
-                }
+
 				let tab_id = tab.selector().replace('#','') + '_panel';
 				let position_left = (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id].left() + 'px') : '0px';
 				let position_top = (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id].top() + 'px') : '0px';

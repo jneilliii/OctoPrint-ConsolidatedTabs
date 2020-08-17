@@ -42,9 +42,11 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 	def get_assets(self):
 		return dict(
 			js=["js/jquery-ui.min.js",
+				"gridstack/js/gridstack.min.js",
+				"gridstack/js/gridstack/gridstack.jQueryUI.min.js",
 				"js/knockout-sortable.js",
 				"js/consolidatedtabs.js"],
-			css=["css/consolidatedtabs.css"]
+			css=["gridstack/css/gridstack.min.css", "css/consolidatedtabs.css"]
 		)
 
 	##~~ SimpleApiPlugin mixin
