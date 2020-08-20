@@ -50,12 +50,9 @@ If using Themeify you will want to add extra settings to your Advanced options. 
 * [X] ~~Figure out how to get rid of the extra whitespace at the bottom of the page after panels are positioned.~~
 
 ## Most Recent Release
-**[0.0.8](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.0.8)** (08/16/2020)
+**[0.0.9](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.0.9)** (08/19/2020)
 
-* change width logic with new option `Use Full Width of Browser`
-* switch to panel activation using shift+click
-* add containment
-* save size and position on panel deactivation, reducing save calls
+* update settings UI to hopefully clear up confusion with how to activate panels for moving/resizing
 
 **[All Releases](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases)**
 
