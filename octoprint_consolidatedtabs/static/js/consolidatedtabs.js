@@ -16,10 +16,6 @@ $(function() {
 		self.webcamtab = parameters[5];
 		self.terminalViewModel = parameters[6];
 
-		if (self.touchui && self.touchui.isActive()) {
-			return
-		}
-
 		self.availableTabs = ko.observableArray([]);
 		self.tabs = ko.observableArray([]);
 		self.tab_callbacks = ko.observable({});
@@ -145,6 +141,10 @@ $(function() {
 		}
 
 		self.onAllBound = function(allViewModels) {
+		    // bypass if TouchUI is installed and active
+            if (self.touchui && self.touchui.isActive()) {
+                return
+            }
 			// get all available tab change callbacks
 			ko.utils.arrayForEach(allViewModels,function(item){
 				if((item.onTabChange || item.onAfterTabChange) && item !== self){
