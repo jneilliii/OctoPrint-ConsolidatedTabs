@@ -1,9 +1,8 @@
 # Consolidated Tabs
 
-This plugin will allow you to combine the selected tabs into a single tab as draggable and resizable panels.
+This plugin will allow you to combine the selected tabs into a single tab as draggable and resizable panels. Click the screenshot below to see an exmple YouTube video.
 
-![screenshot tab](screenshot_tab.png)
-
+[![screenshot tab](screenshot_tab.png)](https://www.youtube.com/watch?v=fd2xVNUORg8)
 
 **Note:** Initial positioning and sizing can be difficult due to the relative positioning of the panels. You may have to drag/resize and refresh the page a couple of times to get everything perfectly aligned. See [Tips](#Tips) for more information.
 
@@ -47,12 +46,13 @@ If using Themeify you will want to add extra settings to your Advanced options. 
 ![screenshot themeify](screenshot_themeify.png)
 
 ## To-Do
-* [X] ~~Figure out how to get rid of the extra whitespace at the bottom of the page after panels are positioned.~~
+* [ ] Figure out how to get rid of the extra whitespace at the bottom of the page after panels are positioned.
+* [ ] Add YouTube video showing placement and resizing of tabs.
 
 ## Most Recent Release
-**[0.0.9](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.0.9)** (08/19/2020)
+**[0.1.0](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.1.0)** (08/22/2020)
 
-* update settings UI to hopefully clear up confusion with how to activate panels for moving/resizing
+* fix issues with Webcam Tab plugin
 
 **[All Releases](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases)**
 
