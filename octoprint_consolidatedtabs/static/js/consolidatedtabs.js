@@ -143,6 +143,7 @@ $(function() {
 		self.onAllBound = function(allViewModels) {
 		    // bypass if TouchUI is installed and active
             if (self.touchui && self.touchui.isActive()) {
+                $('li#tab_plugin_consolidatedtabs_link').remove();
                 return
             }
 			// get all available tab change callbacks
