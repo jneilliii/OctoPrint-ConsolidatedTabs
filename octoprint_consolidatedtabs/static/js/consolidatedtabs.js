@@ -16,6 +16,10 @@ $(function() {
 		self.webcamtab = parameters[5];
 		self.terminalViewModel = parameters[6];
 
+		if (self.touchui && self.touchui.isActive()) {
+			return
+		}
+
 		self.availableTabs = ko.observableArray([]);
 		self.tabs = ko.observableArray([]);
 		self.tab_callbacks = ko.observable({});
@@ -79,6 +83,7 @@ $(function() {
 			self.remove_title = self.settings.settings.plugins.consolidatedtabs.remove_title();
 			self.tab_width = self.settings.settings.plugins.consolidatedtabs.width();
 			self.full_width = self.settings.settings.plugins.consolidatedtabs.full_width();
+			self.drag_snap = self.settings.settings.plugins.consolidatedtabs.drag_snap();
 			$('ul#tabs li:not(.dropdown)').each(function(){
 				if($(this).attr('id') !== 'tab_plugin_consolidatedtabs_link' && self.assignedTabsByID().indexOf($(this).attr('id')) < 0){
 					self.availableTabs.push({id: ko.observable($(this).attr('id')),
@@ -105,8 +110,10 @@ $(function() {
             if(self.full_width !== self.settings.settings.plugins.consolidatedtabs.full_width()){
                 return true;
             }
-            return self.tab_width !== self.settings.settings.plugins.consolidatedtabs.width();
-
+            if(self.drag_snap !== self.settings.settings.plugins.consolidatedtabs.drag_snap()) {
+                return true;
+            }
+            return false;
         }
 
 		self.onEventSettingsUpdated = function(){
@@ -220,7 +227,7 @@ $(function() {
             $("#tab_plugin_consolidatedtabs > div > div.panel").draggable({
                 handle : '.panel-heading',
                 containment : '#tab_plugin_consolidatedtabs > div',
-                snap : true,
+                snap : self.settings.settings.plugins.consolidatedtabs.drag_snap(),
                 stack: 'div.panel',
                 zIndex: 100,
                 disabled: true,
@@ -284,14 +291,6 @@ $(function() {
 				}
 			}
 			OctoPrint.coreui.selectedTab = current;
-/*			if(current === "#tab_plugin_consolidatedtabs" && self.hasTemp()) {
-				if(!self.temperatureViewModel.plot) {
-					self.temperatureViewModel._initializePlot();
-				} else {
-					self.temperatureViewModel.updatePlot();
-				}
-				self.temperatureViewModel.onAfterTabChange("#temp", previous);
-			}*/
 		}
 
 		self.resetPositions = function() {
