@@ -337,8 +337,8 @@ $(function() {
 	}
 	OCTOPRINT_VIEWMODELS.push({
 		construct: ConsolidatedtabsViewModel,
-		dependencies: ["controlViewModel", "temperatureViewModel", "settingsViewModel", "touchUIViewModel", "dragon_orderViewModel", "WebcamTabViewModel", "terminalViewModel"],
-		optional: ["touchUIViewModel", "dragon_orderViewModel", "WebcamTabViewModel"],
+		dependencies: ["controlViewModel", "temperatureViewModel", "settingsViewModel", "touchUIViewModel", "dragon_orderViewModel", "webcamTabViewModel", "terminalViewModel"],
+		optional: ["touchUIViewModel", "dragon_orderViewModel", "webcamTabViewModel"],
 		elements: ["#consolidatedtabs_settings_form","#tab_plugin_consolidatedtabs"]
 	});
 });
