@@ -190,7 +190,7 @@ $(function() {
 			});
             $("#tab_plugin_consolidatedtabs > div").selectable({
                 filter: '.panel',
-                cancel: 'input,textarea,button,select,option',
+                cancel: 'input,textarea,button,select,option,img',
                 selected: function( event, ui ) {
                     if(event.shiftKey) {
                         self.panelPosition = {panel_sizes: {}, panel_positions: {}};
