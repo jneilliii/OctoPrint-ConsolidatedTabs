@@ -60,6 +60,11 @@ $(function() {
         }
 
         self.resize_container = function(){
+		    // bypass if TouchUI is installed and active
+            if (self.touchui && self.touchui.isActive()) {
+                $('li#tab_plugin_consolidatedtabs_link').remove();
+                return
+            }
 		    // OctoPrint container adjustments
             if(self.settings.settings.plugins.consolidatedtabs.full_width()) {
                 $('div.container.octoprint-container').css({'width': '100%'});
