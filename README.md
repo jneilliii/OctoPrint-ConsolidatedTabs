@@ -15,13 +15,16 @@ or manually using this URL:
 
 ## Settings
 
-![screenshot settings](screenshot_settings.png)
+Click the screenshot below to open a YouTube video demonstrating setting up Consolidated Tabs.
 
+[![screenshot settings](screenshot_settings.png)](https://www.youtube.com/watch?v=rrzeOJF2u4A)
+
+- **Snap to Edges While Dragging:** if enabled panels will snap to the edges of other panels while dragging.
 - **Combined Tabs Order:** all the tabs that will be combined into one tab as a panel.
 - **Uncombined Tabs:** tabs that have not been combined and will remain as their own tab.
 - **Resize Navbar:** whether to resize the width of the top navbar to 100% or not.
 - **Remove Tab Name:** don't show the name of the consolidated tab, only possible if all tabs are combined.
-- **Use Full Width of Browser:** If enabled the tab area will be sized to fit the entire width of the browser and the sidebar will be moved to the left.
+- **Use Full Width of Browser:** if enabled the tab area will be sized to fit the entire width of the browser and the sidebar will be moved to the left.
 - **Clear All Positions and Sizes:** use the buttons to clear all position or size customizations, helpful when panels get moved off screen.
 
 ## Tips
@@ -47,12 +50,19 @@ If using Themeify you will want to add extra settings to your Advanced options. 
 
 ## To-Do
 * [ ] Figure out how to get rid of the extra whitespace at the bottom of the page after panels are positioned.
-* [ ] Add YouTube video showing placement and resizing of tabs.
+* [ ] Figure out how to get temp panel to be selected when drop-downs are selected.
+* [X] ~~Add YouTube video showing placement and resizing of tabs.~~
 
 ## Most Recent Release
-**[0.1.0](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.1.0)** (08/22/2020)
 
-* fix issues with Webcam Tab plugin
+**[0.1.1](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.1.1)** (08/24/2020)
+
+* fix compatibility issues related to Fullscreen Webcam plugin
+* fix compatibility issues related to TouchUI plugin (will not load when TouchUI is installed and active)
+* make draggable snapping optional in settings
+* reduce snapping distance while dragging
+* only snap to outer edge of panels
+* remove wait cursor
 
 **[All Releases](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases)**
 
