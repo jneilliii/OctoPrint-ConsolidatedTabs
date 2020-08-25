@@ -53,9 +53,15 @@ If using Themeify you will want to add extra settings to your Advanced options. 
 * [ ] Add YouTube video showing placement and resizing of tabs.
 
 ## Most Recent Release
-**[0.1.0](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.1.0)** (08/22/2020)
 
-* fix issues with Webcam Tab plugin
+**[0.1.1](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.1.1)** (08/24/2020)
+
+* fix compatibility issues related to Fullscreen Webcam plugin
+* fix compatibility issues related to TouchUI plugin (will not load when TouchUI is installed and active)
+* make draggable snapping optional in settings
+* reduce snapping distance while dragging
+* only snap to outer edge of panels
+* remove wait cursor
 
 **[All Releases](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases)**
 
