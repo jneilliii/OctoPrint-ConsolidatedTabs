@@ -60,6 +60,11 @@ $(function() {
         }
 
         self.resize_container = function(){
+		    // bypass if TouchUI is installed and active
+            if (self.touchui && self.touchui.isActive()) {
+                $('li#tab_plugin_consolidatedtabs_link').remove();
+                return
+            }
 		    // OctoPrint container adjustments
             if(self.settings.settings.plugins.consolidatedtabs.full_width()) {
                 $('div.container.octoprint-container').css({'width': '100%'});
@@ -79,6 +84,9 @@ $(function() {
 			self.remove_title = self.settings.settings.plugins.consolidatedtabs.remove_title();
 			self.tab_width = self.settings.settings.plugins.consolidatedtabs.width();
 			self.full_width = self.settings.settings.plugins.consolidatedtabs.full_width();
+			self.drag_snap = self.settings.settings.plugins.consolidatedtabs.drag_snap();
+			self.panelPosition.panel_positions = ko.toJS(self.settings.settings.plugins.consolidatedtabs.panel_positions);
+			self.panelPosition.panel_sizes = ko.toJS(self.settings.settings.plugins.consolidatedtabs.panel_sizes);
 			$('ul#tabs li:not(.dropdown)').each(function(){
 				if($(this).attr('id') !== 'tab_plugin_consolidatedtabs_link' && self.assignedTabsByID().indexOf($(this).attr('id')) < 0){
 					self.availableTabs.push({id: ko.observable($(this).attr('id')),
@@ -105,8 +113,10 @@ $(function() {
             if(self.full_width !== self.settings.settings.plugins.consolidatedtabs.full_width()){
                 return true;
             }
-            return self.tab_width !== self.settings.settings.plugins.consolidatedtabs.width();
-
+            if(self.drag_snap !== self.settings.settings.plugins.consolidatedtabs.drag_snap()) {
+                return true;
+            }
+            return false;
         }
 
 		self.onEventSettingsUpdated = function(){
@@ -138,6 +148,11 @@ $(function() {
 		}
 
 		self.onAllBound = function(allViewModels) {
+		    // bypass if TouchUI is installed and active
+            if (self.touchui && self.touchui.isActive()) {
+                $('li#tab_plugin_consolidatedtabs_link').remove();
+                return
+            }
 			// get all available tab change callbacks
 			ko.utils.arrayForEach(allViewModels,function(item){
 				if((item.onTabChange || item.onAfterTabChange) && item !== self){
@@ -182,10 +197,9 @@ $(function() {
 			});
             $("#tab_plugin_consolidatedtabs > div").selectable({
                 filter: '.panel',
-                cancel: 'input,textarea,button,select,option',
+                cancel: 'input,textarea,button,select,option,img',
                 selected: function( event, ui ) {
                     if(event.shiftKey) {
-                        self.panelPosition = {panel_sizes: {}, panel_positions: {}};
                         $(ui.selected).resizable("option", "disabled", false);
                         $(ui.selected).draggable("option", "disabled", false);
                         $(ui.selected).addClass('panel-primary');
@@ -196,11 +210,9 @@ $(function() {
                     $(ui.unselected).draggable( "option", "disabled", true );
                     $(ui.unselected).removeClass('panel-primary');
                     if(self.saveNeeded()) {
-                        $('.ui-resizable-handle, i.ui-draggable-handle, .panel-heading, body').css({'cursor': 'wait'});
                         OctoPrint.settings.savePluginSettings('consolidatedtabs', self.panelPosition).done(function () {
                             self.onEventSettingsUpdated();
                             self.saveNeeded(false);
-                            $('.ui-resizable-handle, i.ui-draggable-handle, .panel-heading, body').css({'cursor': ''});
                         });
                     }
                 },
@@ -220,8 +232,10 @@ $(function() {
             $("#tab_plugin_consolidatedtabs > div > div.panel").draggable({
                 handle : '.panel-heading',
                 containment : '#tab_plugin_consolidatedtabs > div',
-                snap : true,
+                snap : self.settings.settings.plugins.consolidatedtabs.drag_snap(),
+                snapTolerance : 7,
                 stack: 'div.panel',
+                snapMode : 'outer',
                 zIndex: 100,
                 disabled: true,
                 start: function (event, ui) {
@@ -250,6 +264,11 @@ $(function() {
 		};
 
         self.controlViewModel.onBrowserTabVisibilityChange = function (status) {
+		    // bypass if TouchUI is installed and active
+            if (self.touchui && self.touchui.isActive()) {
+                $('li#tab_plugin_consolidatedtabs_link').remove();
+                return
+            }
             if (status && self.hasWebcam()) {
                 let selected = OctoPrint.coreui.selectedTab;
                 if (self.webcamtab) {
@@ -284,14 +303,6 @@ $(function() {
 				}
 			}
 			OctoPrint.coreui.selectedTab = current;
-/*			if(current === "#tab_plugin_consolidatedtabs" && self.hasTemp()) {
-				if(!self.temperatureViewModel.plot) {
-					self.temperatureViewModel._initializePlot();
-				} else {
-					self.temperatureViewModel.updatePlot();
-				}
-				self.temperatureViewModel.onAfterTabChange("#temp", previous);
-			}*/
 		}
 
 		self.resetPositions = function() {
