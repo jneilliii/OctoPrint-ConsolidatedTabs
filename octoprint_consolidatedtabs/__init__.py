@@ -40,7 +40,7 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 
 	def get_assets(self):
 		return dict(
-			js=["js/jquery-ui.min.js", "js/jquery.ui.resizable.snap.ext.js", "js/knockout-sortable.js", "js/consolidatedtabs.js"],
+			js=["js/jquery-ui.min.js", "js/jquery.ui.resizable.snap.ext.js", "js/knockout-sortable.1.2.0.js", "js/consolidatedtabs.js"],
 			css=["css/consolidatedtabs.css"]
 		)
 
@@ -76,6 +76,16 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 				user="jneilliii",
 				repo="OctoPrint-ConsolidatedTabs",
 				current=self._plugin_version,
+				stable_branch=dict(
+					name="Stable", branch="master", comittish=["master"]
+				),
+				prerelease_branches=[
+					dict(
+						name="Release Candidate",
+						branch="rc",
+						comittish=["rc", "master"],
+					)
+				],
 
 				# update method: pip
 				pip="https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/archive/{target_version}.zip"

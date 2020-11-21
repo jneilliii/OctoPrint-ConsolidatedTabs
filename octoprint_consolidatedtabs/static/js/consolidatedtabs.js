@@ -197,7 +197,7 @@ $(function() {
 			});
             $("#tab_plugin_consolidatedtabs > div").selectable({
                 filter: '.panel',
-                cancel: 'a,input,textarea,button,select,option,img',
+                cancel: 'a,input,textarea,button,select,option,img,pre',
                 selected: function( event, ui ) {
                     if(event.shiftKey) {
                         $(ui.selected).resizable("option", "disabled", false);

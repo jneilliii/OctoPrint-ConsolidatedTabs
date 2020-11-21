@@ -55,16 +55,22 @@ If using Themeify you will want to add extra settings to your Advanced options. 
 
 ## Most Recent Release
 
-**[0.1.1](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.1.1)** (08/24/2020)
+**[0.1.3](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/0.1.3)** (11/21/2020)
 
-* fix compatibility issues related to Fullscreen Webcam plugin
-* fix compatibility issues related to TouchUI plugin (will not load when TouchUI is installed and active)
-* make draggable snapping optional in settings
-* reduce snapping distance while dragging
-* only snap to outer edge of panels
-* remove wait cursor
+**Added**
 
-**[All Releases](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases)**
+* release channels for OctoPrint 1.5.0+ for future rc testing, similar to OctoPrint as described [here](https://community.octoprint.org/t/how-to-use-the-release-channels-to-help-test-release-candidates/402)
+
+**Updated**
+
+* knockout sortable library for OctoPrint 1.5.0 compatibility
+
+**Fixed**
+
+* allow selecting contents of terminal tab
+* couple of tweaks related to Pretty GCode plugin
+
+### [All Releases](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases)
 
 ## Get Help
 
@@ -82,6 +88,8 @@ Check out my other plugins [here](https://plugins.octoprint.org/by_author/#jneil
 - [@TheTuxKeeper](https://github.com/thetuxkeeper)
 - @tideline3d
 - [SimplyPrint](https://simplyprint.dk/)
+- [Andrew Beeman](https://github.com/Kiendeleo)
+- [Calanish](https://github.com/calanish)
 
 ## Support My Efforts
 I, jneilliii, programmed this plugin for fun and do my best effort to support those that have issues with it, please return the favor and leave me a tip or become a Patron if you find this plugin helpful and want me to continue future development.
