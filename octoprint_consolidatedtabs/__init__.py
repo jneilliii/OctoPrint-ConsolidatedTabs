@@ -20,7 +20,8 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 			panel_positions={},
 			panel_sizes={},
 			remove_title=False,
-			drag_snap=True
+			drag_snap=True,
+			gridstack=[]
 		)
 
 	##-- Template mixin
@@ -33,6 +34,7 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 
 		return [
 			dict(type="tab", name=tab_name, custom_bindings=True),
+			dict(type="tab", custom_bindings=True, template="consolidatedtabs_tab_gridstack.jinja2"),
 			dict(type="settings", custom_bindings=True)
 		]
 
@@ -40,8 +42,8 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 
 	def get_assets(self):
 		return dict(
-			js=["js/jquery-ui.min.js", "js/jquery.ui.resizable.snap.ext.js", "js/knockout-sortable.1.2.0.js", "js/consolidatedtabs.js"],
-			css=["css/consolidatedtabs.css"]
+			js=["js/jquery-ui.min.js", "js/jquery.ui.resizable.snap.ext.js", "js/knockout-sortable.1.2.0.js", "js/gridstack-h5.js", "js/consolidatedtabs.js"],
+			css=["css/gridstack.min.css", "css/consolidatedtabs.css"]
 		)
 
 	##~~ SimpleApiPlugin mixin

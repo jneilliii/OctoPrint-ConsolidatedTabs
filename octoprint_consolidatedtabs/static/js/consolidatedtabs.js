@@ -22,6 +22,7 @@ $(function() {
 		self.resetting_positions = ko.observable(false);
 		self.resetting_sizes = ko.observable(false);
 		self.settings_ui_changed = ko.observable(false);
+		self.editing = ko.observable(false);
 		self.required_callbacks = {onTabChange: {}, onAfterTabChange: {}};
 
 		self.assignedTabs = ko.pureComputed(function(){
@@ -96,7 +97,19 @@ $(function() {
 				}
 			});
 			self.resize_container();
+
+			self.grid = GridStack.init();
+			self.grid.load(ko.toJS(self.settings.settings.plugins.consolidatedtabs.gridstack()), true);
 		}
+
+		self.toggleEditMode = function(){
+		    self.grid.setStatic(self.editing());
+		    self.editing(!self.editing());
+		    if(!self.editing()){
+		        var serialized_data = self.grid.save();
+		        OctoPrint.settings.savePluginSettings('consolidatedtabs', {gridstack: serialized_data});
+            }
+        }
 
 		self.showReloadDialog = function(){
 			$('#reloadui_overlay_wrapper > div > div > p:nth-child(2)').html('Consolidated Tabs changes detected, you must reload now for these new changes to take effect. This will not interrupt any print jobs you might have ongoing.');
@@ -187,7 +200,7 @@ $(function() {
 				let size_width = (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id].width() + 'px') : '590px';
 				let size_height = (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id].height() + 'px') : 'auto';
 				$('<div class="panel panel-default draggable resizable" id="' + tab.selector().replace('#','') + '_panel" style="width: ' + size_width + '\; height: ' + size_height + '\; left: ' + position_left + '\; top: ' + position_top + '\;"><div class="panel-heading"><span class="panel-mover">'+tab.name()+'</span></div><div class="panel-body"></div></div>').appendTo('#tab_plugin_consolidatedtabs > div.row-fluid');
-				$(tab.selector()).appendTo(tab.selector()+'_panel > .panel-body').removeClass('tab-pane');
+				$(tab.selector()).appendTo('div[gs-id='+tab.id()+'] div.grid-stack-item-content').removeClass('tab-pane');
 				$('#' + tab.id()).remove();
 				if(self.settings.settings.plugins.consolidatedtabs.remove_title() && self.unassignedTabs().length === 0){
 				    $('#tab_plugin_consolidatedtabs_link').css({border: '0px', width: '0px', overflow: 'hidden'});
@@ -339,6 +352,8 @@ $(function() {
 
 		self.addTab = function(data) {
 			self.settings.settings.plugins.consolidatedtabs.tab_order.push(data);
+			console.log(data);
+			self.grid.addWidget('<div class="grid-stack-item"></div>', {w: 6, id: data.id(), selector: data.selector()});
 			self.availableTabs.remove(data);
 		}
 		self.removeTab = function(data) {
@@ -350,6 +365,6 @@ $(function() {
 		construct: ConsolidatedtabsViewModel,
 		dependencies: ["controlViewModel", "temperatureViewModel", "settingsViewModel", "touchUIViewModel", "dragon_orderViewModel", "webcamTabViewModel", "terminalViewModel"],
 		optional: ["touchUIViewModel", "dragon_orderViewModel", "webcamTabViewModel"],
-		elements: ["#consolidatedtabs_settings_form","#tab_plugin_consolidatedtabs"]
+		elements: ["#consolidatedtabs_settings_form", "#tab_plugin_consolidatedtabs", "#tab_plugin_consolidatedtabs_2"]
 	});
 });
