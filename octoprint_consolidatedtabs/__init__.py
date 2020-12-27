@@ -34,7 +34,6 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 
 		return [
 			dict(type="tab", name=tab_name, custom_bindings=True),
-			dict(type="tab", custom_bindings=True, template="consolidatedtabs_tab_gridstack.jinja2"),
 			dict(type="settings", custom_bindings=True)
 		]
 
