@@ -208,3 +208,18 @@ div.page-container.pgfullscreen #tab_plugin_prettygcode {
     position: fixed !important;
     z-index: 1002 !important;
 }
+
+.grid-stack-item-removing {
+	opacity: 0.8;
+	filter: blur(5px);
+}
+
+.grid-stack-item.consolidated .grid-stack-item-content {
+	padding: 5px;
+	border: 1px solid #dddddd;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+	z-index: 1;
+	display: block;
+}

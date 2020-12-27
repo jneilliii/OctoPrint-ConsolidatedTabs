@@ -98,8 +98,11 @@ $(function() {
 			});
 			self.resize_container();
 
-			self.grid = GridStack.init();
+			self.grid = GridStack.init({removable: true, removeTimeout: 200, itemClass: "consolidated", margin: 5, cellHeight: 25});
 			self.grid.load(ko.toJS(self.settings.settings.plugins.consolidatedtabs.gridstack()), true);
+			// hack to hide file upload overlay
+			self.grid.on('dragstart', function(event, ui){$('#drop_overlay').hide();});
+			console.log(self.grid);
 		}
 
 		self.toggleEditMode = function(){
@@ -107,6 +110,10 @@ $(function() {
 		    self.editing(!self.editing());
 		    if(!self.editing()){
 		        var serialized_data = self.grid.save();
+		        // hack to remove content before saving
+		        for(let item in serialized_data){
+		            delete serialized_data[item].content;
+                }
 		        OctoPrint.settings.savePluginSettings('consolidatedtabs', {gridstack: serialized_data});
             }
         }
@@ -353,7 +360,7 @@ $(function() {
 		self.addTab = function(data) {
 			self.settings.settings.plugins.consolidatedtabs.tab_order.push(data);
 			console.log(data);
-			self.grid.addWidget('<div class="grid-stack-item"></div>', {w: 6, id: data.id(), selector: data.selector()});
+			self.grid.addWidget('<div class="grid-stack-item"></div>', {w: 6, h: 25, id: data.id(), selector: data.selector()});
 			self.availableTabs.remove(data);
 		}
 		self.removeTab = function(data) {
