@@ -138,7 +138,7 @@ $(function() {
 		    let id = $(target.currentTarget).parent().parent().attr('id');
 		    let selector = $(target.currentTarget).parent()[0].hash;
 		    let name = $(target.currentTarget).parent().text().trim();
-		    self.grid.addWidget({w: 6, h: 25, id: id, selector: selector, name: name});
+		    self.grid.addWidget({w: 12, h: 25, id: id, selector: selector, name: name});
 		    $(selector).appendTo('div[gs-id='+id+'] div.grid-stack-item-content').removeClass('tab-pane');
 		    $('#'+id).remove();
 		    console.log(id, selector);
