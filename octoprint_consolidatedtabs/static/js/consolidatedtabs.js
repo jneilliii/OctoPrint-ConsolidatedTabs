@@ -239,7 +239,7 @@ $(function() {
 				    $('#tab_plugin_consolidatedtabs_link').css({border: '0px', width: '0px', overflow: 'hidden'});
 				    $('ul#tabs').css({'border-bottom':'0px'});
 				    $('div#tabs_content').css({'padding-top': '0px', 'padding-left': '0px', 'padding-right': '5px', border: '0px', 'margin-top': '-37px'});
-				    $('#sidebar').css({'margin-top': '5px'})
+				    $('#sidebar').css({'margin-top': '6px'})
                 }
 			});
             // $("#tab_plugin_consolidatedtabs > div").selectable({
