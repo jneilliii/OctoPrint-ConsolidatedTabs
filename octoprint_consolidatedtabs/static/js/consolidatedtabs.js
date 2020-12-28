@@ -100,7 +100,7 @@ $(function() {
 			// });
 			self.resize_container();
 
-			self.grid = GridStack.init({removable: true, removeTimeout: 200, itemClass: "consolidated", margin: 5, cellHeight: 25});
+			self.grid = GridStack.init({removable: true, removeTimeout: 200, itemClass: "consolidated", margin: 5, cellHeight: 25, column: 24});
 			self.grid.load(ko.toJS(self.settings.settings.plugins.consolidatedtabs.gridstack()), true);
 			// hack to hide file upload overlay
 			self.grid.on('dragstart', function(){$('#drop_overlay').hide();});
@@ -129,7 +129,7 @@ $(function() {
                         }
                     });
             } else {
-		        $('ul#tabs li:not(.dropdown):not(#tab_plugin_consolidatedtabs_2_link) a').prepend('<button class="btn-mini btn-primary"><i class="icon icon-plus"></i></button> ');
+		        $('ul#tabs li:not(.dropdown):not(#tab_plugin_consolidatedtabs_link) a').prepend('<button class="btn-mini btn-primary"><i class="icon icon-plus"></i></button> ');
 		        $('ul#tabs li button.btn-mini').click(self.addGridstackWidget);
             }
         }
