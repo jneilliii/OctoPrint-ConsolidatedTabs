@@ -100,7 +100,7 @@ $(function() {
 			// });
 			self.resize_container();
 
-			self.grid = GridStack.init({removable: true, removeTimeout: 200, itemClass: "consolidated", margin: 5, cellHeight: 25, column: 24});
+			self.grid = GridStack.init({removable: true, removeTimeout: 200, itemClass: "consolidated", margin: 5, cellHeight: 25, column: 24, float: true});
 			self.grid.load(ko.toJS(self.settings.settings.plugins.consolidatedtabs.gridstack()), true);
 			// hack to hide file upload overlay
 			self.grid.on('dragstart', function(){$('#drop_overlay').hide();});
