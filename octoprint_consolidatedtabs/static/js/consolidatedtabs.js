@@ -131,6 +131,7 @@ $(function() {
             } else {
 		        $('ul#tabs li:not(.dropdown):not(#tab_plugin_consolidatedtabs_link) a').prepend('<button class="btn-mini btn-primary"><i class="icon icon-plus"></i></button> ');
 		        $('ul#tabs li button.btn-mini').click(self.addGridstackWidget);
+		        self.settings.hide();
             }
         }
 
