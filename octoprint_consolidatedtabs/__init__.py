@@ -21,7 +21,10 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 			panel_sizes={},
 			remove_title=False,
 			drag_snap=True,
-			gridstack=[]
+			gridstack=[],
+			enable_float=False,
+			hide_instructions=False,
+			hide_edit_button=False
 		)
 
 	##-- Template mixin
@@ -34,7 +37,8 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 
 		return [
 			dict(type="tab", name=tab_name, custom_bindings=True),
-			dict(type="settings", custom_bindings=True)
+			dict(type="settings", custom_bindings=True),
+			dict(type="navbar", data_bind="visible: consolidated_tab_active() && !hide_edit_button()", custom_bindings=True)
 		]
 
 	##~~ AssetPlugin mixin

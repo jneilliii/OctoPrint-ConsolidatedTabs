@@ -14,6 +14,12 @@ div#tabs_content {
 	margin: 2px;
 }
 
+#consolidatedtabs_edit_overlay > div.modal-body > div.row-fluid > i.icon {
+	width: 20px;
+	display: inline-block;
+	text-align: center;
+}
+
 .panel {
 	padding: 15px;
 	background-color: #ffffff;
