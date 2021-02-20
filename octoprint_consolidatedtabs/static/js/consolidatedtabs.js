@@ -114,7 +114,7 @@ $(function() {
 			});
 			self.resize_container();
 
-			self.grid = GridStack.init({removable: true, removeTimeout: 200, itemClass: "consolidated", margin: 5, cellHeight: 25, column: 24, float: self.settings.settings.plugins.consolidatedtabs.enable_float()});
+			self.grid = GridStack.init({removable: true, removeTimeout: 200, itemClass: "consolidated", margin: 5, cellHeight: 25, column: 24, float: self.settings.settings.plugins.consolidatedtabs.enable_float(), styleInHead : true});
 			self.grid.load(ko.toJS(self.settings.settings.plugins.consolidatedtabs.gridstack()), true);
 			// hack to hide file upload overlay
 			self.grid.on('dragstart', function(){$('#drop_overlay').hide();});
