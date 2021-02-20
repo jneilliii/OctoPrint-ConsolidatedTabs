@@ -14,7 +14,7 @@ plugin_package = "octoprint_consolidatedtabs"
 plugin_name = "Consolidated Tabs"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
-plugin_version = "0.1.4dev9"
+plugin_version = "0.1.4dev10"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module

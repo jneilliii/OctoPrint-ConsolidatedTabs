@@ -114,7 +114,7 @@ $(function() {
 			});
 			self.resize_container();
 
-			self.grid = GridStack.init({removable: true, removeTimeout: 200, itemClass: "consolidated", margin: 5, cellHeight: 25, column: 24, float: self.settings.settings.plugins.consolidatedtabs.enable_float(), styleInHead : true});
+			self.grid = GridStack.init({removable: true, removeTimeout: 3000, itemClass: "consolidated", margin: 5, cellHeight: 25, column: 24, float: self.settings.settings.plugins.consolidatedtabs.enable_float(), styleInHead : true});
 			self.grid.load(ko.toJS(self.settings.settings.plugins.consolidatedtabs.gridstack()), true);
 			// hack to hide file upload overlay
 			self.grid.on('dragstart', function(){$('#drop_overlay').hide();});
@@ -160,6 +160,7 @@ $(function() {
 		    let selector = $(target.currentTarget).parent()[0].hash;
 		    let name = $(target.currentTarget).parent().text().trim();
 		    self.grid.addWidget({w: 12, h: 25, id: id, selector: selector, name: name});
+		    self.unassignedTabs.remove({'id': ko.observable(id), 'selector': ko.observable(selector), 'name': ko.observable(name)});
 		    $(selector).appendTo('div[gs-id='+id+'] div.grid-stack-item-content').removeClass('tab-pane');
 		    $('#'+id).remove();
 		    console.log(id, selector);
@@ -233,11 +234,12 @@ $(function() {
 
 				$(tab.selector()).appendTo('div[gs-id='+tab.id()+'] div.grid-stack-item-content').removeClass('tab-pane');
 				$('#' + tab.id()).remove();
+				console.log(self.unassignedTabs());
 				if(self.settings.settings.plugins.consolidatedtabs.remove_title() && self.unassignedTabs().length === 0){
 				    $('#tab_plugin_consolidatedtabs_link').css({border: '0px', width: '0px', overflow: 'hidden'});
 				    $('ul#tabs').css({'border-bottom':'0px'});
 				    $('div#tabs_content').css({'padding-top': '0px', 'padding-left': '0px', 'padding-right': '5px', border: '0px', 'margin-top': '-37px'});
-				    $('#sidebar').css({'margin-top': '6px'})
+				    $('#sidebar').css({'margin-top': '6px'});
                 }
 			});
 
