@@ -38,7 +38,7 @@ class ConsolidatedtabsPlugin(octoprint.plugin.SettingsPlugin,
 		return [
 			dict(type="tab", name=tab_name, custom_bindings=True),
 			dict(type="settings", custom_bindings=True),
-			dict(type="navbar", data_bind="visible: consolidated_tab_active() && !hide_edit_button()", custom_bindings=True)
+			dict(type="navbar", data_bind="visible: !hide_edit_button()", custom_bindings=True)
 		]
 
 	##~~ AssetPlugin mixin

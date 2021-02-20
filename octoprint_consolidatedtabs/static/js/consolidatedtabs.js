@@ -26,7 +26,6 @@ $(function() {
 		self.saving = ko.observable(false);
 		self.widgets_removed = ko.observable(false);
 		self.required_callbacks = {onTabChange: {}, onAfterTabChange: {}};
-		self.consolidated_tab_active = ko.observable(false);
 		self.hide_edit_button = ko.observable(false);
 
 		self.assignedTabs = ko.pureComputed(function(){
@@ -280,13 +279,10 @@ $(function() {
 		// fix control tab
 		self.onTabChange = function(current, previous) {
 			if(current === "#tab_plugin_consolidatedtabs"){
-			    self.consolidated_tab_active(true);
 				for (let callback in self.required_callbacks.onTabChange){
 					self.required_callbacks.onTabChange[callback].isActive = true;
 					self.required_callbacks.onTabChange[callback].onTabChange('#'+callback,previous);
 				}
-			} else {
-			    self.consolidated_tab_active(false);
             }
 		};
 
