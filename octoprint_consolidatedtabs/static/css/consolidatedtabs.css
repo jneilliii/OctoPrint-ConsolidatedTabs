@@ -48,6 +48,11 @@ div#tabs_content {
 	cursor: default;
 }
 
+/* hack for fullscreen webcam plugin*/
+.inlineFullscreen #webcam_rotator {
+	z-index: 2000 !important;
+}
+
 div.panel-primary.ui-selected > div.panel-heading.ui-draggable-handle {
 	cursor: move;
 }
