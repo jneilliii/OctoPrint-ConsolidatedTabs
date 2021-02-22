@@ -48,11 +48,6 @@ div#tabs_content {
 	cursor: default;
 }
 
-/* hack for fullscreen webcam plugin*/
-.inlineFullscreen #webcam_rotator {
-	z-index: 2000 !important;
-}
-
 div.panel-primary.ui-selected > div.panel-heading.ui-draggable-handle {
 	cursor: move;
 }
@@ -233,4 +228,13 @@ div.page-container.pgfullscreen #tab_plugin_prettygcode {
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 	z-index: 1;
 	display: block;
+}
+
+/* hacks for fullscreen webcam plugin*/
+.inlineFullscreen #webcam_rotator {
+	z-index: 2000 !important;
+}
+
+.inlineFullscreen #tab_plugin_consolidatedtabs .grid-stack-item.consolidated, .inlineFullscreen #tab_plugin_consolidatedtabs .grid-stack-item-content {
+	z-index: inherit;
 }
