@@ -160,7 +160,7 @@ $(function() {
 		    let selector = $(target.currentTarget).parent()[0].hash;
 		    let name = $(target.currentTarget).parent().text().trim();
 		    self.grid.addWidget({w: 12, h: 25, id: id, selector: selector, name: name});
-		    self.unassignedTabs.remove({'id': ko.observable(id), 'selector': ko.observable(selector), 'name': ko.observable(name)});
+		    self.availableTabs.remove({'id': ko.observable(id), 'selector': ko.observable(selector), 'name': ko.observable(name)});
 		    $(selector).appendTo('div[gs-id='+id+'] div.grid-stack-item-content').removeClass('tab-pane');
 		    $('#'+id).remove();
 		    console.log(id, selector);
