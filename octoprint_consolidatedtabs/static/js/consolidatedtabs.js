@@ -265,12 +265,14 @@ $(function() {
                 $('li#tab_plugin_consolidatedtabs_link').remove();
                 return
             }
-            if (status && self.hasWebcam()) {
+            if (status) {
                 let selected = OctoPrint.coreui.selectedTab;
-                if (self.webcamtab) {
-                    OctoPrint.coreui.selectedTab = "#tab_plugin_webcamtab";
-                } else {
-                    OctoPrint.coreui.selectedTab = "#control";
+                if(self.hasWebcam() && selected === "#tab_plugin_consolidatedtabs") {
+                    if (self.webcamtab) {
+                        OctoPrint.coreui.selectedTab = "#tab_plugin_webcamtab";
+                    } else {
+                        OctoPrint.coreui.selectedTab = "#control";
+                    }
                 }
                 self.controlViewModel._enableWebcam();
                 OctoPrint.coreui.selectedTab = selected;
@@ -282,6 +284,14 @@ $(function() {
 		// fix control tab
 		self.onTabChange = function(current, previous) {
 			if(current === "#tab_plugin_consolidatedtabs"){
+			    if(self.hasWebcam()) {
+                    if (self.webcamtab) {
+                        OctoPrint.coreui.selectedTab = "#tab_plugin_webcamtab";
+                    } else {
+                        OctoPrint.coreui.selectedTab = "#control";
+                    }
+                    self.controlViewModel._enableWebcam();
+                }
 			    self.consolidated_tab_active(true);
 				for (let callback in self.required_callbacks.onTabChange){
 					self.required_callbacks.onTabChange[callback].isActive = true;
