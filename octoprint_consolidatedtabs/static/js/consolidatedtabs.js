@@ -25,6 +25,7 @@ $(function() {
 		self.editing = ko.observable(false);
 		self.saving = ko.observable(false);
 		self.widgets_removed = ko.observable(false);
+		self.widgets_added = ko.observable(false);
 		self.required_callbacks = {onTabChange: {}, onAfterTabChange: {}};
 		self.consolidated_tab_active = ko.observable(false);
 		self.hide_edit_button = ko.observable(false);
@@ -144,7 +145,7 @@ $(function() {
                     .done(function(data){
                         console.log(data);
                         self.saving(false);
-                        if (self.widgets_removed()){
+                        if (self.widgets_removed() || self.widgets_added()){
                             self.showReloadDialog();
                         }
                     });
@@ -163,7 +164,7 @@ $(function() {
 		    self.availableTabs.remove({'id': ko.observable(id), 'selector': ko.observable(selector), 'name': ko.observable(name)});
 		    $(selector).appendTo('div[gs-id='+id+'] div.grid-stack-item-content').removeClass('tab-pane');
 		    $('#'+id).remove();
-		    console.log(id, selector);
+		    self.widgets_removed(true);
         }
 
 		self.showReloadDialog = function(){
