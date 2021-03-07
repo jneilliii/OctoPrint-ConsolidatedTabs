@@ -14,6 +14,12 @@ div#tabs_content {
 	margin: 2px;
 }
 
+#consolidatedtabs_edit_overlay > div.modal-body > div.row-fluid > i.icon {
+	width: 20px;
+	display: inline-block;
+	text-align: center;
+}
+
 .panel {
 	padding: 15px;
 	background-color: #ffffff;
@@ -207,4 +213,28 @@ div.page-container.pgfullscreen #tab_plugin_prettygcode {
 .pgfullscreen #files_wrapper, .pgfullscreen #state_wrapper {
     position: fixed !important;
     z-index: 1002 !important;
+}
+
+.grid-stack-item-removing {
+	opacity: 0.8;
+	filter: blur(5px);
+}
+
+.grid-stack-item.consolidated .grid-stack-item-content {
+	padding: 5px;
+	border: 1px solid #dddddd;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+	z-index: 1;
+	display: block;
+}
+
+/* hacks for fullscreen webcam plugin*/
+.inlineFullscreen #webcam_rotator {
+	z-index: 2000 !important;
+}
+
+.inlineFullscreen #tab_plugin_consolidatedtabs .grid-stack-item.consolidated, .inlineFullscreen #tab_plugin_consolidatedtabs .grid-stack-item-content {
+	z-index: inherit;
 }

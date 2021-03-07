@@ -22,15 +22,21 @@ $(function() {
 		self.resetting_positions = ko.observable(false);
 		self.resetting_sizes = ko.observable(false);
 		self.settings_ui_changed = ko.observable(false);
+		self.editing = ko.observable(false);
+		self.saving = ko.observable(false);
+		self.widgets_removed = ko.observable(false);
+		self.widgets_added = ko.observable(false);
 		self.required_callbacks = {onTabChange: {}, onAfterTabChange: {}};
+		self.consolidated_tab_active = ko.observable(false);
+		self.hide_edit_button = ko.observable(false);
 
 		self.assignedTabs = ko.pureComputed(function(){
-            return ko.utils.arrayMap(self.settings.settings.plugins.consolidatedtabs.tab_order(), function (tab) {
+            return ko.utils.arrayMap(self.settings.settings.plugins.consolidatedtabs.gridstack(), function (tab) {
                                     return tab.selector();
                                 });
                             });
         self.assignedTabsByID = ko.pureComputed(function(){
-            return ko.utils.arrayMap(self.settings.settings.plugins.consolidatedtabs.tab_order(), function (tab) {
+            return ko.utils.arrayMap(self.settings.settings.plugins.consolidatedtabs.gridstack(), function (tab) {
                                     return tab.id();
                                 });
                             });
@@ -52,6 +58,17 @@ $(function() {
         self.hasWebcam = ko.pureComputed(function(){
             return (self.assignedTabsByID().indexOf('control_link') > -1 || self.assignedTabsByID().indexOf('tab_plugin_webcamtab_link') > -1);
         });
+        self.button_icon = ko.pureComputed(function(){
+            if(!self.editing() && !self.saving()) {
+                return 'icon icon-pencil';
+            } else if(self.editing()) {
+                return 'icon icon-save';
+            } else if(self.saving()) {
+                return 'icon icon-spinner icon-spin disabled';
+            } else {
+                return 'icon icon-question';
+            }
+        })
         self.panelPosition = {panel_sizes: {}, panel_positions: {}};
         self.saveNeeded = ko.observable(false);
 
@@ -79,14 +96,15 @@ $(function() {
 			}
         }
 
+        self.onBeforeBinding = function(){
+		    self.hide_edit_button(self.settings.settings.plugins.consolidatedtabs.hide_edit_button());
+        }
+
 		self.onAfterBinding = function() {
-			self.active_settings = ko.toJSON(self.settings.settings.plugins.consolidatedtabs.tab_order);
+			self.active_settings = ko.toJSON(self.settings.settings.plugins.consolidatedtabs.gridstack);
 			self.remove_title = self.settings.settings.plugins.consolidatedtabs.remove_title();
 			self.tab_width = self.settings.settings.plugins.consolidatedtabs.width();
 			self.full_width = self.settings.settings.plugins.consolidatedtabs.full_width();
-			self.drag_snap = self.settings.settings.plugins.consolidatedtabs.drag_snap();
-			self.panelPosition.panel_positions = ko.toJS(self.settings.settings.plugins.consolidatedtabs.panel_positions);
-			self.panelPosition.panel_sizes = ko.toJS(self.settings.settings.plugins.consolidatedtabs.panel_sizes);
 			$('ul#tabs li:not(.dropdown)').each(function(){
 				if($(this).attr('id') !== 'tab_plugin_consolidatedtabs_link' && self.assignedTabsByID().indexOf($(this).attr('id')) < 0){
 					self.availableTabs.push({id: ko.observable($(this).attr('id')),
@@ -96,7 +114,58 @@ $(function() {
 				}
 			});
 			self.resize_container();
+
+			self.grid = GridStack.init({removable: true, removeTimeout: 3000, itemClass: "consolidated", margin: 5, cellHeight: 25, column: 24, float: self.settings.settings.plugins.consolidatedtabs.enable_float(), styleInHead : true});
+			self.grid.load(ko.toJS(self.settings.settings.plugins.consolidatedtabs.gridstack()), true);
+			// hack to hide file upload overlay
+			self.grid.on('dragstart', function(){$('#drop_overlay').hide();});
+			self.grid.on('removed', function() {
+                self.widgets_removed(true);
+			});
 		}
+
+		self.toggleEditMode = function(){
+		    if(self.saving()){
+		        return;
+            }
+		    if(!self.settings.settings.plugins.consolidatedtabs.hide_instructions() && !self.editing()){
+		        $("#consolidatedtabs_edit_overlay").modal("show");
+            }
+		    self.grid.setStatic(self.editing());
+		    self.editing(!self.editing());
+		    if(!self.editing()){
+		        self.saving(true);
+		        var serialized_data = self.grid.save();
+		        // hack to remove content before saving
+		        for(let item in serialized_data){
+		            delete serialized_data[item].content;
+                }
+		        $('ul#tabs li button.btn-mini').remove();
+		        OctoPrint.settings.savePluginSettings('consolidatedtabs', {gridstack: serialized_data})
+                    .done(function(data){
+                        console.log(data);
+                        self.saving(false);
+                        if (self.widgets_removed() || self.widgets_added()){
+                            self.showReloadDialog();
+                        }
+                    });
+            } else {
+		        $('ul#tabs li:not(.dropdown):not(#tab_plugin_consolidatedtabs_link) a').prepend('<button class="btn-mini btn-primary"><i class="icon icon-plus"></i></button> ');
+		        $('ul#tabs li button.btn-mini').click(self.addGridstackWidget);
+		        self.settings.hide();
+            }
+        }
+
+        self.addGridstackWidget = function(target){
+		    let id = $(target.currentTarget).parent().parent().attr('id');
+		    let selector = $(target.currentTarget).parent()[0].hash;
+		    let name = $(target.currentTarget).parent().text().trim();
+		    self.grid.addWidget({w: 12, h: 25, id: id, selector: selector, name: name});
+		    self.availableTabs.remove({'id': ko.observable(id), 'selector': ko.observable(selector), 'name': ko.observable(name)});
+		    $(selector).appendTo('div[gs-id='+id+'] div.grid-stack-item-content').removeClass('tab-pane');
+		    $('#'+id).remove();
+		    self.widgets_removed(true);
+        }
 
 		self.showReloadDialog = function(){
 			$('#reloadui_overlay_wrapper > div > div > p:nth-child(2)').html('Consolidated Tabs changes detected, you must reload now for these new changes to take effect. This will not interrupt any print jobs you might have ongoing.');
@@ -104,16 +173,13 @@ $(function() {
         }
 
         self.reload_needed = function(){
-		    if(self.active_settings !== ko.toJSON(self.settings.settings.plugins.consolidatedtabs.tab_order)) {
+		    if(self.active_settings !== ko.toJSON(self.settings.settings.plugins.consolidatedtabs.gridstack)) {
                 return true;
             }
-            if(self.remove_title !== self.settings.settings.plugins.consolidatedtabs.remove_title()){
+		    if(self.remove_title !== self.settings.settings.plugins.consolidatedtabs.remove_title()){
                 return true;
             }
             if(self.full_width !== self.settings.settings.plugins.consolidatedtabs.full_width()){
-                return true;
-            }
-            if(self.drag_snap !== self.settings.settings.plugins.consolidatedtabs.drag_snap()) {
                 return true;
             }
             return false;
@@ -123,6 +189,7 @@ $(function() {
 			if (self.reload_needed()){
 				self.showReloadDialog();
 			}
+			self.hide_edit_button(self.settings.settings.plugins.consolidatedtabs.hide_edit_button());
 		}
 
 		self.onSettingsHidden = function(){
@@ -130,22 +197,6 @@ $(function() {
 				self.showReloadDialog();
             }
         }
-
-		self.mouseDownCallback = function(e) {
-			if(e.ctrlKey===0) $('div.panel.draggable').removeClass('ui-selected');
-			$(this).parent().addClass('ui-selected');
-		}
-
-		self.savePosition = function(ui){
-            self.panelPosition.panel_positions[ui.helper.attr('id')] = ui.position;
-            self.saveNeeded(true);
-		}
-
-		self.saveSize = function(ui){
-            self.panelPosition.panel_sizes[ui.helper.attr('id')] = ui.size;
-            self.panelPosition.panel_positions[ui.helper.attr('id')] = ui.position;
-            self.saveNeeded(true);
-		}
 
 		self.onAllBound = function(allViewModels) {
 		    // bypass if TouchUI is installed and active
@@ -171,7 +222,7 @@ $(function() {
 				return;
 			}
 			// move original tab content and remove tab links.
-			ko.utils.arrayForEach(self.settings.settings.plugins.consolidatedtabs.tab_order(), function(tab) {
+			ko.utils.arrayForEach(self.settings.settings.plugins.consolidatedtabs.gridstack(), function(tab) {
 				self.tabs.push(tab);
 				if(self.tab_callbacks()[tab.selector().replace('#','')]){
 					if(self.tab_callbacks()[tab.selector().replace('#','')].onTabChange){
@@ -181,73 +232,19 @@ $(function() {
 						self.required_callbacks.onAfterTabChange[tab.selector().replace('#','')] = self.tab_callbacks()[tab.selector().replace('#','')];
 					}
 				}
-				let tab_id = tab.selector().replace('#','') + '_panel';
-				let position_left = (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id].left() + 'px') : '0px';
-				let position_top = (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_positions[tab_id].top() + 'px') : '0px';
-				let size_width = (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id].width() + 'px') : '590px';
-				let size_height = (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id]) ? (self.settings.settings.plugins.consolidatedtabs.panel_sizes[tab_id].height() + 'px') : 'auto';
-				$('<div class="panel panel-default draggable resizable" id="' + tab.selector().replace('#','') + '_panel" style="width: ' + size_width + '\; height: ' + size_height + '\; left: ' + position_left + '\; top: ' + position_top + '\;"><div class="panel-heading"><span class="panel-mover">'+tab.name()+'</span></div><div class="panel-body"></div></div>').appendTo('#tab_plugin_consolidatedtabs > div.row-fluid');
-				$(tab.selector()).appendTo(tab.selector()+'_panel > .panel-body').removeClass('tab-pane');
+
+				$(tab.selector()).appendTo('div[gs-id='+tab.id()+'] div.grid-stack-item-content').removeClass('tab-pane');
 				$('#' + tab.id()).remove();
+				console.log(self.unassignedTabs());
 				if(self.settings.settings.plugins.consolidatedtabs.remove_title() && self.unassignedTabs().length === 0){
 				    $('#tab_plugin_consolidatedtabs_link').css({border: '0px', width: '0px', overflow: 'hidden'});
 				    $('ul#tabs').css({'border-bottom':'0px'});
 				    $('div#tabs_content').css({'padding-top': '0px', 'padding-left': '0px', 'padding-right': '5px', border: '0px', 'margin-top': '-37px'});
+				    $('#sidebar').css({'margin-top': '6px'});
                 }
 			});
-            $("#tab_plugin_consolidatedtabs > div").selectable({
-                filter: '.panel',
-                cancel: 'a,input,textarea,button,select,option,img,pre',
-                selected: function( event, ui ) {
-                    if(event.shiftKey) {
-                        $(ui.selected).resizable("option", "disabled", false);
-                        $(ui.selected).draggable("option", "disabled", false);
-                        $(ui.selected).addClass('panel-primary');
-                    }
-                },
-                unselected: function( event, ui ) {
-                    $(ui.unselected).resizable( "option", "disabled", true );
-                    $(ui.unselected).draggable( "option", "disabled", true );
-                    $(ui.unselected).removeClass('panel-primary');
-                    if(self.saveNeeded()) {
-                        OctoPrint.settings.savePluginSettings('consolidatedtabs', self.panelPosition).done(function () {
-                            self.onEventSettingsUpdated();
-                            self.saveNeeded(false);
-                        });
-                    }
-                },
-                unselecting: function(event, ui){
-                    /*if( $(".ui-selected, .ui-unselecting").length > 1 || event.ctrlKey ) {*/
-                    if( $(ui.unselecting).is('.ui-selected') ) {
-                        return false;
-                        $(ui.unselecting).removeClass("ui-unselecting");
-                    }
-                },
-                selecting: function(event, ui){
-                    if( $(".ui-selected, .ui-selecting").length > 1) {
-                        $(ui.selecting).removeClass("ui-selecting");
-                    }
-                }
-            });
-            $("#tab_plugin_consolidatedtabs > div > div.panel").draggable({
-                handle : '.panel-heading',
-                containment : '#tab_plugin_consolidatedtabs > div',
-                snap : self.settings.settings.plugins.consolidatedtabs.drag_snap(),
-                snapTolerance : 7,
-                stack: 'div.panel',
-                snapMode : 'outer',
-                zIndex: 100,
-                disabled: true,
-                start: function (event, ui) {
-                    if (!$(this).is(".ui-selected")) {
-                        $(".ui-selected").removeClass("ui-selected panel-primary");
-                    }
-                },
-                stop: function( event, ui ) {self.savePosition(ui)}
-            });
-            $('div.panel.resizable').resizable({handles: 's, w, e, sw, se', disabled: true, stop: function( event, ui ) {self.saveSize(ui)}});
 
-            let selected = OctoPrint.coreui.selectedTab;
+			let selected = OctoPrint.coreui.selectedTab;
             if(self.hasWebcam()) {
                 if (self.webcamtab) {
                     OctoPrint.coreui.selectedTab = "#tab_plugin_webcamtab";
@@ -269,12 +266,14 @@ $(function() {
                 $('li#tab_plugin_consolidatedtabs_link').remove();
                 return
             }
-            if (status && self.hasWebcam()) {
+            if (status) {
                 let selected = OctoPrint.coreui.selectedTab;
-                if (self.webcamtab) {
-                    OctoPrint.coreui.selectedTab = "#tab_plugin_webcamtab";
-                } else {
-                    OctoPrint.coreui.selectedTab = "#control";
+                if(self.hasWebcam() && selected === "#tab_plugin_consolidatedtabs") {
+                    if (self.webcamtab) {
+                        OctoPrint.coreui.selectedTab = "#tab_plugin_webcamtab";
+                    } else {
+                        OctoPrint.coreui.selectedTab = "#control";
+                    }
                 }
                 self.controlViewModel._enableWebcam();
                 OctoPrint.coreui.selectedTab = selected;
@@ -286,11 +285,22 @@ $(function() {
 		// fix control tab
 		self.onTabChange = function(current, previous) {
 			if(current === "#tab_plugin_consolidatedtabs"){
+			    if(self.hasWebcam()) {
+                    if (self.webcamtab) {
+                        OctoPrint.coreui.selectedTab = "#tab_plugin_webcamtab";
+                    } else {
+                        OctoPrint.coreui.selectedTab = "#control";
+                    }
+                    self.controlViewModel._enableWebcam();
+                }
+			    self.consolidated_tab_active(true);
 				for (let callback in self.required_callbacks.onTabChange){
 					self.required_callbacks.onTabChange[callback].isActive = true;
 					self.required_callbacks.onTabChange[callback].onTabChange('#'+callback,previous);
 				}
-			}
+			} else {
+			    self.consolidated_tab_active(false);
+            }
 		};
 
 		// fix temperature tab
@@ -304,52 +314,11 @@ $(function() {
 			}
 			OctoPrint.coreui.selectedTab = current;
 		}
-
-		self.resetPositions = function() {
-		    self.resetting_positions(true);
-			$.ajax({
-				url: API_BASEURL + "plugin/consolidatedtabs",
-				type: "POST",
-				dataType: "json",
-                data: JSON.stringify({command: 'reset_positions'}),
-				contentType: "application/json; charset=UTF-8"
-			}).done(function(data){
-                    if(data.positions_reset) {
-                        self.settings_ui_changed(true);
-                        self.resetting_positions(false);
-                    }
-				});
-        }
-
-        self.resetSizes = function() {
-		    self.resetting_sizes(true);
-			$.ajax({
-				url: API_BASEURL + "plugin/consolidatedtabs",
-				type: "POST",
-				dataType: "json",
-                data: JSON.stringify({command: 'reset_sizes'}),
-				contentType: "application/json; charset=UTF-8"
-			}).done(function(data){
-                    if(data.sizes_reset) {
-                        self.settings_ui_changed(true);
-                        self.resetting_sizes(false);
-                    }
-				});
-        }
-
-		self.addTab = function(data) {
-			self.settings.settings.plugins.consolidatedtabs.tab_order.push(data);
-			self.availableTabs.remove(data);
-		}
-		self.removeTab = function(data) {
-			self.availableTabs.push(data);
-			self.settings.settings.plugins.consolidatedtabs.tab_order.remove(data);
-		}
 	}
 	OCTOPRINT_VIEWMODELS.push({
 		construct: ConsolidatedtabsViewModel,
 		dependencies: ["controlViewModel", "temperatureViewModel", "settingsViewModel", "touchUIViewModel", "dragon_orderViewModel", "webcamTabViewModel", "terminalViewModel"],
 		optional: ["touchUIViewModel", "dragon_orderViewModel", "webcamTabViewModel"],
-		elements: ["#consolidatedtabs_settings_form","#tab_plugin_consolidatedtabs"]
+		elements: ["#consolidatedtabs_settings_form", "#tab_plugin_consolidatedtabs", "#navbar_plugin_consolidatedtabs", "#consolidatedtabs_edit_overlay"]
 	});
 });
