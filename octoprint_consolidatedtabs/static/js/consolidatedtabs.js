@@ -29,6 +29,8 @@ $(function() {
 		self.required_callbacks = {onTabChange: {}, onAfterTabChange: {}};
 		self.consolidated_tab_active = ko.observable(false);
 		self.hide_edit_button = ko.observable(false);
+		self.stream = ko.observable();
+		self.webcamEnabled = ko.observable();
 
 		self.assignedTabs = ko.pureComputed(function(){
             return ko.utils.arrayMap(self.settings.settings.plugins.consolidatedtabs.gridstack(), function (tab) {
@@ -56,7 +58,7 @@ $(function() {
             return (self.assignedTabsByID().indexOf('temp_link') > -1);
         });
         self.hasWebcam = ko.pureComputed(function(){
-            return (self.assignedTabsByID().indexOf('control_link') > -1 || self.assignedTabsByID().indexOf('tab_plugin_webcamtab_link') > -1);
+            return ((self.assignedTabsByID().indexOf('control_link') > -1 || self.assignedTabsByID().indexOf('tab_plugin_webcamtab_link') > -1) && (self.settings.webcam_streamUrl().length > 0 && self.settings.webcam_webcamEnabled()));
         });
         self.button_icon = ko.pureComputed(function(){
             if(!self.editing() && !self.saving()) {
