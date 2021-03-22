@@ -52,11 +52,9 @@ If using Themeify you may want to add extra settings to your Advanced options. T
 
 ## Most Recent Release
 
-**[1.0.0](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/1.0.0)** (03/07/2021)
+**[1.0.1](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases/tag/1.0.1)** (03/21/2021)
 
-**Warning: Major Changes**
-
-* This plugin has been rewritten utilizing [gridstack.js](https://gridstackjs.com/) with a 24 wide column layout. As a result of this change all tabs will have to be re-consolidated after upgrade, review the updated [settings](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs#settings) and new [instructions](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs#instructions).
+* resolved issue where edit button would disappear if the control tab was consolidated but there was no webcam stream URL.
 
 ### [All Releases](https://github.com/jneilliii/OctoPrint-ConsolidatedTabs/releases)
 
