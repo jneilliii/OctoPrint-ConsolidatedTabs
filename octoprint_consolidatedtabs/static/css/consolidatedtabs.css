@@ -238,3 +238,28 @@ div.page-container.pgfullscreen #tab_plugin_prettygcode {
 .inlineFullscreen #tab_plugin_consolidatedtabs .grid-stack-item.consolidated, .inlineFullscreen #tab_plugin_consolidatedtabs .grid-stack-item-content {
 	z-index: inherit;
 }
+
+/* ================== == */
+/* ==Themeify Patches == */
+/* ================== == */
+
+/* Discoranged */
+.themeify.discoranged #tab_plugin_consolidatedtabs .grid-stack-item.consolidated .grid-stack-item-content {
+	background-color: #2f3136;
+	border: 1px solid #fc8003;
+}
+
+.themeify.discoranged #tab_plugin_consolidatedtabs .grid-stack-item.consolidated .grid-stack-item-content::-webkit-scrollbar {
+    background-color: #2f3136;
+    border: none;
+}
+
+.themeify.discoranged #tab_plugin_consolidatedtabs .grid-stack-item.consolidated .grid-stack-item-content::-webkit-scrollbar-thumb {
+    background-color: #fc8003;
+}
+
+.themeify.discoranged #tab_plugin_consolidatedtabs .grid-stack-item.consolidated .grid-stack-item-content::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgb(47 49 54 / 50%);
+}
+
+
