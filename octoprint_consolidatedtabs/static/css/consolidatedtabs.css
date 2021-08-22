@@ -193,13 +193,13 @@ div.footer {
     padding-right: 20px;
 }
 
+/* hacks for pretty gcode plugin*/
 div.page-container.pgfullscreen #tab_plugin_prettygcode {
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 1002;
 }
 
 .pgfullscreen #tab_plugin_prettygcode .pgfilestoggle {
@@ -210,9 +210,22 @@ div.page-container.pgfullscreen #tab_plugin_prettygcode {
 	z-index: 1002 !important;
 }
 
+.pgfullscreen #tab_plugin_prettygcode .pgcameratoggle {
+	z-index: 1002 !important;
+}
+
+.pgfullscreen #tab_plugin_prettygcode .pgdashtoggle {
+	z-index: 1002 !important;
+}
+
 .pgfullscreen #files_wrapper, .pgfullscreen #state_wrapper {
+	top: 60px !important;
     position: fixed !important;
     z-index: 1002 !important;
+}
+
+.pgfullscreen .gwin #webcam_rotator {
+    z-index: 1001 !important;
 }
 
 .grid-stack-item-removing {

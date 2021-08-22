@@ -15,6 +15,7 @@ $(function() {
 		self.dragonorder = parameters[4];
 		self.webcamtab = parameters[5];
 		self.terminalViewModel = parameters[6];
+		self.prettygcodeViewModel = parameters[7];
 
 		self.availableTabs = ko.observableArray([]);
 		self.tabs = ko.observableArray([]);
@@ -246,6 +247,13 @@ $(function() {
                 }
 			});
 
+			// Pretty GCode Plugin Hacks
+            if (self.prettygcodeViewModel) {
+                console.log('Applying Pretty GCode Hacks.');
+                $('.grid-stack-item.consolidated').not(':has(#tab_plugin_prettygcode)').addClass('pghidden');
+                $('#fs_link').attr('href', '/?fullscreen=1#tab_plugin_consolidatedtabs');
+            }
+
 			let selected = OctoPrint.coreui.selectedTab;
             if(self.hasWebcam()) {
                 if (self.webcamtab) {
@@ -319,8 +327,8 @@ $(function() {
 	}
 	OCTOPRINT_VIEWMODELS.push({
 		construct: ConsolidatedtabsViewModel,
-		dependencies: ["controlViewModel", "temperatureViewModel", "settingsViewModel", "touchUIViewModel", "dragon_orderViewModel", "webcamTabViewModel", "terminalViewModel"],
-		optional: ["touchUIViewModel", "dragon_orderViewModel", "webcamTabViewModel"],
+		dependencies: ["controlViewModel", "temperatureViewModel", "settingsViewModel", "touchUIViewModel", "dragon_orderViewModel", "webcamTabViewModel", "terminalViewModel", "prettyGCodeViewModel"],
+		optional: ["touchUIViewModel", "dragon_orderViewModel", "webcamTabViewModel", "prettyGCodeViewModel"],
 		elements: ["#consolidatedtabs_settings_form", "#tab_plugin_consolidatedtabs", "#navbar_plugin_consolidatedtabs", "#consolidatedtabs_edit_overlay"]
 	});
 });
