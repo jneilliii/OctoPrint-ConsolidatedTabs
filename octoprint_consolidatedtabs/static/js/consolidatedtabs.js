@@ -16,6 +16,7 @@ $(function() {
 		self.webcamtab = parameters[5];
 		self.terminalViewModel = parameters[6];
 		self.prettygcodeViewModel = parameters[7];
+        self.classicWebcamViewModel = parameters[8];
 
 		self.availableTabs = ko.observableArray([]);
 		self.tabs = ko.observableArray([]);
@@ -268,29 +269,32 @@ $(function() {
 			if(selected === "#tab_plugin_consolidatedtabs" && self.hasTemp()) {
 				self.temperatureViewModel._initializePlot();
 			}
-		};
 
-        self.controlViewModel.onBrowserTabVisibilityChange = function (status) {
-		    // bypass if TouchUI is installed and active
-            if (self.touchui && self.touchui.isActive()) {
-                $('li#tab_plugin_consolidatedtabs_link').remove();
-                return
-            }
-            if (status) {
-                let selected = OctoPrint.coreui.selectedTab;
-                if(self.hasWebcam() && selected === "#tab_plugin_consolidatedtabs") {
-                    if (self.webcamtab) {
-                        OctoPrint.coreui.selectedTab = "#tab_plugin_webcamtab";
-                    } else {
-                        OctoPrint.coreui.selectedTab = "#control";
+            if(!self.classicWebcamViewModel){
+                self.controlViewModel.onBrowserTabVisibilityChange = function (status) {
+                    // bypass if TouchUI is installed and active
+                    if (self.touchui && self.touchui.isActive()) {
+                        $('li#tab_plugin_consolidatedtabs_link').remove();
+                        return;
                     }
-                }
-                self.controlViewModel._enableWebcam();
-                OctoPrint.coreui.selectedTab = selected;
-            } else {
-                self.controlViewModel._disableWebcam();
+                    if (status) {
+                        let selected = OctoPrint.coreui.selectedTab;
+                        if(self.hasWebcam() && selected === "#tab_plugin_consolidatedtabs") {
+                            if (self.webcamtab) {
+                                OctoPrint.coreui.selectedTab = "#tab_plugin_webcamtab";
+                            } else {
+                                OctoPrint.coreui.selectedTab = "#control";
+                            }
+                        }
+                        self.controlViewModel._enableWebcam();
+                        OctoPrint.coreui.selectedTab = selected;
+                        return;
+                    } else {
+                        self.controlViewModel._disableWebcam();
+                    }
+                };
             }
-        };
+		};
 
 		// fix control tab
 		self.onTabChange = function(current, previous) {
@@ -301,7 +305,11 @@ $(function() {
                     } else {
                         OctoPrint.coreui.selectedTab = "#control";
                     }
-                    self.controlViewModel._enableWebcam();
+                    if(!self.classicWebcamViewModel) {
+                        self.controlViewModel._enableWebcam();
+                    } else {
+                        self.classicWebcamViewModel._enableWebcam();
+                    }
                 }
 			    self.consolidated_tab_active(true);
 				for (let callback in self.required_callbacks.onTabChange){
@@ -323,12 +331,12 @@ $(function() {
 				}
 			}
 			OctoPrint.coreui.selectedTab = current;
-		}
+		};
 	}
 	OCTOPRINT_VIEWMODELS.push({
 		construct: ConsolidatedtabsViewModel,
-		dependencies: ["controlViewModel", "temperatureViewModel", "settingsViewModel", "touchUIViewModel", "dragon_orderViewModel", "webcamTabViewModel", "terminalViewModel", "prettyGCodeViewModel"],
-		optional: ["touchUIViewModel", "dragon_orderViewModel", "webcamTabViewModel", "prettyGCodeViewModel"],
+		dependencies: ["controlViewModel", "temperatureViewModel", "settingsViewModel", "touchUIViewModel", "dragon_orderViewModel", "webcamTabViewModel", "terminalViewModel", "prettyGCodeViewModel", "classicWebcamViewModel"],
+		optional: ["touchUIViewModel", "dragon_orderViewModel", "webcamTabViewModel", "prettyGCodeViewModel", "classicWebcamViewModel"],
 		elements: ["#consolidatedtabs_settings_form", "#tab_plugin_consolidatedtabs", "#navbar_plugin_consolidatedtabs", "#consolidatedtabs_edit_overlay"]
 	});
 });
