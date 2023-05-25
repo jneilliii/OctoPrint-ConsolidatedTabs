@@ -193,13 +193,13 @@ div.footer {
     padding-right: 20px;
 }
 
+/* hacks for pretty gcode plugin*/
 div.page-container.pgfullscreen #tab_plugin_prettygcode {
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 1002;
 }
 
 .pgfullscreen #tab_plugin_prettygcode .pgfilestoggle {
@@ -210,9 +210,22 @@ div.page-container.pgfullscreen #tab_plugin_prettygcode {
 	z-index: 1002 !important;
 }
 
+.pgfullscreen #tab_plugin_prettygcode .pgcameratoggle {
+	z-index: 1002 !important;
+}
+
+.pgfullscreen #tab_plugin_prettygcode .pgdashtoggle {
+	z-index: 1002 !important;
+}
+
 .pgfullscreen #files_wrapper, .pgfullscreen #state_wrapper {
+	top: 60px !important;
     position: fixed !important;
     z-index: 1002 !important;
+}
+
+.pgfullscreen .gwin #webcam_rotator {
+    z-index: 1001 !important;
 }
 
 .grid-stack-item-removing {
@@ -238,3 +251,28 @@ div.page-container.pgfullscreen #tab_plugin_prettygcode {
 .inlineFullscreen #tab_plugin_consolidatedtabs .grid-stack-item.consolidated, .inlineFullscreen #tab_plugin_consolidatedtabs .grid-stack-item-content {
 	z-index: inherit;
 }
+
+/* ================== == */
+/* ==Themeify Patches == */
+/* ================== == */
+
+/* Discoranged */
+.themeify.discoranged #tab_plugin_consolidatedtabs .grid-stack-item.consolidated .grid-stack-item-content {
+	background-color: #2f3136;
+	border: 1px solid #fc8003;
+}
+
+.themeify.discoranged #tab_plugin_consolidatedtabs .grid-stack-item.consolidated .grid-stack-item-content::-webkit-scrollbar {
+    background-color: #2f3136;
+    border: none;
+}
+
+.themeify.discoranged #tab_plugin_consolidatedtabs .grid-stack-item.consolidated .grid-stack-item-content::-webkit-scrollbar-thumb {
+    background-color: #fc8003;
+}
+
+.themeify.discoranged #tab_plugin_consolidatedtabs .grid-stack-item.consolidated .grid-stack-item-content::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgb(47 49 54 / 50%);
+}
+
+
