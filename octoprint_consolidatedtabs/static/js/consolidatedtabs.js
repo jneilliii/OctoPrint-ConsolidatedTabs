@@ -273,7 +273,7 @@ $(function() {
             if(!self.classicWebcamViewModel){
                 self.controlViewModel.onBrowserTabVisibilityChange = function (status) {
                     // bypass if TouchUI is installed and active
-                    if (self.touchui && self.touchui.isActive()) {
+                    if ((self.touchui && self.touchui.isActive()) || (!self.controlViewModel._enableWebcam || !self.controlViewModel._disableWebcam)) {
                         $('li#tab_plugin_consolidatedtabs_link').remove();
                         return;
                     }
@@ -289,7 +289,7 @@ $(function() {
                         self.controlViewModel._enableWebcam();
                         OctoPrint.coreui.selectedTab = selected;
                         return;
-                    } else {
+                    } else  {
                         self.controlViewModel._disableWebcam();
                     }
                 };
@@ -305,9 +305,9 @@ $(function() {
                     } else {
                         OctoPrint.coreui.selectedTab = "#control";
                     }
-                    if(!self.classicWebcamViewModel) {
+                    if(!self.classicWebcamViewModel && self.controlViewModel._enableWebcam) {
                         self.controlViewModel._enableWebcam();
-                    } else {
+                    } else if (self.classicWebcamViewModel){
                         self.classicWebcamViewModel._enableWebcam();
                     }
                 }
