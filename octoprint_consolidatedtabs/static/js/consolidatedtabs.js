@@ -273,8 +273,12 @@ $(function() {
             if(!self.classicWebcamViewModel){
                 self.controlViewModel.onBrowserTabVisibilityChange = function (status) {
                     // bypass if TouchUI is installed and active
-                    if ((self.touchui && self.touchui.isActive()) || (!self.controlViewModel._enableWebcam || !self.controlViewModel._disableWebcam)) {
+                    if (self.touchui && self.touchui.isActive()) {
                         $('li#tab_plugin_consolidatedtabs_link').remove();
+                        return;
+                    }
+                    // bypass if classic webcam plugin is disabled
+                    if (!self.controlViewModel._enableWebcam || !self.controlViewModel._disableWebcam) {
                         return;
                     }
                     if (status) {
